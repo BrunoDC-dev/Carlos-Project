@@ -33,7 +33,7 @@ const VehicleCard = (props: VehicleCardProps) => {
   );
 
   return (
-    <div className="flex flex-col items-center bg-[#f5f6f8] rounded-lg border-2 border-solid border-[#e2e2e2] py-4 ">
+    <div className="flex flex-col items-center bg-[#ffffff] rounded-2xl border-2 border-solid border-[#e2e2e2] pt-4 drop-shadow-lg	">
       <h4  className="text-lg font-semibold text-gray-600">{props.car_name}</h4>
       <Image
         src="/car.png"
@@ -42,7 +42,7 @@ const VehicleCard = (props: VehicleCardProps) => {
         alt="picture for login in desktop type "
       />
 
-      <div className="flex flex-row justify-around w-full">
+      <div className="flex flex-row justify-around w-full py-3">
         <div className="flex flex-col items-center">
           <p className="text-base font-semibold text-gray-500">Patente:</p>
           <p className="text-sm font-medium text-gray-400">{props.registration_number}</p>
@@ -52,20 +52,21 @@ const VehicleCard = (props: VehicleCardProps) => {
           <p className="text-sm font-medium text-gray-400">{props.driver_name}</p>
         </div>
       </div>
-      <div className="flex flex-row w-full justify-between px-5">
+      <div className="flex flex-row w-full justify-around px-5 pt-3 bg-[#EAECF0] border-2 border-solid border-[#E2E2E2]">
         <div className="flex flex-col items-center">
-            <Icon className="text-2xl  text-[#2F70F2]" icon="material-symbols:savings-outline" />
-          <p>{rentabilidad}</p>
+            <Icon className="text-3xl  text-[#2F70F2]" icon="material-symbols:savings-outline" />
+          <p className="pb-1 font-semibold text-lg">{rentabilidad}%</p>
         </div>
         <div className="flex flex-col items-center">
-        <Icon className="text-2xl  text-[#876AFE]" icon="grommet-icons:money" />
-          <p>{props.generated_amount}</p>
+        <Icon className="text-3xl  text-[#876AFE]" icon="grommet-icons:money" />
+          <p className="pb-1 font-semibold text-lg">${props.generated_amount}</p>
         </div>
         <div className="flex flex-col items-center">
-        <Icon className="text-2xl  text-[#FFBC02]" icon="material-symbols:receipt-long" />
-          <p>{props.wasted_amount}</p>
+        <Icon className="text-3xl  text-[#FFBC02]" icon="material-symbols:receipt-long" />
+          <p className="pb-1 font-semibold text-lg">${props.wasted_amount}</p>
         </div>
       </div>
+      <a href="" className="bg-[#355B3E] w-full text-center py-1 text-[#fafafa] font-normal rounded-b-lg  hover:bg-[#fafafa] hover:text-[#355B3E] ">Nuevo Mes</a>
     </div>
   );
 };
