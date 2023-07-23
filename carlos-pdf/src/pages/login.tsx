@@ -51,7 +51,7 @@ export default function Home() {
                 Bienvendio de vuelta, por favor loguese a su cuenta
               </p>
             </div>
-            <form action="" className="flex flex-col px-5 items-center">
+            <form action="/api/login" method="POST" className="flex flex-col px-5 items-center">
               <div className="flex flex-col py-2 w-full">
                 <label
                   htmlFor="email"
@@ -61,7 +61,7 @@ export default function Home() {
                 </label>
                 <input
                   type="email"
-                  name=""
+                  name="email"
                   required
                   id="email"
                   className="text-base rounded-lg border-solid border-2 border-[#a0bba6] leading-6 text-[#355b3e] py-1 px-1"
@@ -77,7 +77,7 @@ export default function Home() {
                 <input
                   type="password"
                   required
-                  name="\"
+                  name="password"
                   id="contrasena"
                   className="text-base rounded-lg border-solid border-2 border-[#a0bba6] leading-6 text-[#355b3e] py-1 px-1"
                 />
