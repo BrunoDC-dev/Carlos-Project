@@ -2,8 +2,8 @@ import Image from "next/image";
 import { Inter } from "next/font/google";
 import MonthCard from "@/components/MonthCard";
 import VehicleCard from "@/components/VehicleCard";
-import { Swiper, SwiperSlide } from 'swiper/react';
-import 'swiper/css';
+import { Swiper, SwiperSlide } from "swiper/react";
+import "swiper/css";
 const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
@@ -45,27 +45,28 @@ export default function Home() {
             />
           </div>
         </div>
-    <div>
-    <h2 className="text-xl font-semibold text-gray-600 pb-8">Tus Camionetas:</h2>
-      <Swiper>
-        {cars.map((id,index)=>{
-          return (
-            <SwiperSlide key={index}>
-               <VehicleCard
-              car_name="Kangoo"
-              registration_number="acffaa"
-              driver_name="Omar"
-              img_src="ds"
-              generated_amount={100}
-              wasted_amount={50}
-            />
-            </SwiperSlide>
-          )
-        })}
-      </Swiper>
-    </div>
+        <div>
+          <h2 className="text-xl font-semibold text-gray-600 pb-8">
+            Tus Camionetas:
+          </h2>
+          <Swiper>
+            {cars.map((id, index) => {
+              return (
+                <SwiperSlide key={index}>
+                  <VehicleCard
+                    car_name="Kangoo"
+                    registration_number="acffaa"
+                    driver_name="Omar"
+                    img_src="ds"
+                    generated_amount={100}
+                    wasted_amount={50}
+                  />
+                </SwiperSlide>
+              );
+            })}
+          </Swiper>
+        </div>
       </div>
-
     </main>
   );
 }

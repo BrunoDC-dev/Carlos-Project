@@ -23,5 +23,5 @@ def store_image(image_path, document_id):
 
 if __name__ == "__main__":
     image_path = "car.png"  # Replace with the path to your image
-    document_id = "64bb1528c0219ee241d957cb"  # Replace with the desired unique identifier
+    document_id = "64bdd09e3b7c26ae72b83add"  # Replace with the desired unique identifier
     store_image(image_path, document_id)

@@ -1,11 +1,11 @@
 import Image from "next/image";
 import { Inter } from "next/font/google";
 import { useEffect, useState } from "react";
+import Swal from "sweetalert2";
 const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
   const [screenWidth, setScreenWidth] = useState(0);
-
   useEffect(() => {
     const updateScreenWidth = () => {
       setScreenWidth(window.innerWidth);
@@ -20,6 +20,71 @@ export default function Home() {
     // Clean up event listener on unmount
     return () => window.removeEventListener("resize", updateScreenWidth);
   }, []);
+  const handleSubmit = async (event: any) => {
+    event.preventDefault();
+    Swal.fire({
+      title: "Verificando usuario",
+      didOpen: () => {
+        Swal.showLoading();
+      },
+      allowOutsideClick: false, // Prevents the user from taking away the loader
+    });
+
+    const data = {
+      email: event.target.email.value,
+      password: event.target.password.value,
+      session: event.target.session.checked,
+    };
+    const JSONdata = JSON.stringify(data);
+    const endpoint = "/api/login";
+    const options = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSONdata,
+    };
+
+    try {
+      const response_dirty = await fetch(endpoint, options);
+
+      if (response_dirty.status === 200) {
+        const response_clean = await response_dirty.json();
+        console.log(response_clean);
+        // Update the Swal modal content with the result message
+        Swal.hideLoading();
+        Swal.update({
+          title: "Success!", // Update the title to your success message
+          text: "Form submitted successfully!", // Update the text to your success message
+          icon: "success",
+          allowOutsideClick: true, // Allow the user to click outside the modal after getting the result
+        });
+      } else if (response_dirty.status === 403) {
+        Swal.hideLoading();
+        Swal.update({
+          title: "Error!",
+          text: "Datos de inicio de sesión incorrectos",
+          icon: "error",
+          allowOutsideClick: true,
+        });
+      } else {
+        Swal.update({
+          title: "Error!",
+          text: "Servidor en mantenimiento, vuelva a intentarlo más tarde",
+          icon: "error",
+          allowOutsideClick: true,
+        });
+      }
+    } catch (error) {
+      Swal.hideLoading();
+      Swal.update({
+        title: "Error!",
+        text: "Hubo un error al procesar la solicitud",
+        icon: "error",
+        allowOutsideClick: true,
+      });
+    }
+  };
 
   return (
     <main className="h-screen bg-[#ffff]">
@@ -33,7 +98,7 @@ export default function Home() {
               alt="Picture of login for the web"
             />
           </div>
-          <p className="w-fit">Eclipse Lab</p>
+          <p className="w-fit text-[#ffff]">Eclipse Lab</p>
         </div>
         <div>
           <Image
@@ -51,7 +116,10 @@ export default function Home() {
                 Bienvendio de vuelta, por favor loguese a su cuenta
               </p>
             </div>
-            <form action="/api/login" method="POST" className="flex flex-col px-5 items-center">
+            <form
+              onSubmit={handleSubmit}
+              className="flex flex-col px-5 items-center"
+            >
               <div className="flex flex-col py-2 w-full">
                 <label
                   htmlFor="email"
@@ -84,7 +152,12 @@ export default function Home() {
               </div>
               <div className="flex flex-row justify-between pt-5 w-full pb-8">
                 <div className="flex flex-row items-center gap-1">
-                  <input type="checkbox" name="\" id="recordarme" />
+                  <input
+                    type="checkbox"
+                    name="session"
+                    id="recordarme"
+                    defaultChecked={false}
+                  />
                   <label
                     htmlFor="recordarme"
                     className="text-[#355b3e] text-base leading-4"
@@ -101,7 +174,7 @@ export default function Home() {
               </div>
               <button
                 type="submit"
-                className=" w-3/5 py-5 rounded-lg bg-[#029664] text-base font-semibold leading-4"
+                className=" w-3/5 py-5 rounded-lg bg-[#029664] text-base font-semibold leading-4 text-[#ffff]"
               >
                 Entrar
               </button>
