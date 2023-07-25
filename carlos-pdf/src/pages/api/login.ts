@@ -3,9 +3,9 @@ import { NextApiRequest, NextApiResponse } from "next";
 const bcrypt = require("bcryptjs");
 import { MongoClient, MongoClientOptions, ObjectId } from "mongodb";
 import { timeStamp } from "console";
-
+import { cookies } from "next/dist/client/components/headers";
+const Cookies = require('js-cookie')
 const { v4: uuidv4 } = require("uuid");
-
 type Data = {
   message?: string;
   error?: string;
@@ -18,6 +18,7 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>,
 ) {
+
   if (req.method === "POST") {
     try {
       const { password } = req.body;
@@ -63,12 +64,16 @@ export default async function handler(
             { upsert: true },
           );
           if (session) {
+            Cookies.set('remis_session_id',sessionId)
+            Cookies.set('email', email)
             return res.status(200).json({
               message: "Logueado.",
               sessionId: sessionId,
               remember: true,
             });
           }
+          Cookies.set('remis_session_id',sessionId, {secure: false})
+            Cookies.set('email', email,{ path: '/' })
           return res.status(200).json({
             message: "Logueado.",
             sessionId: sessionId,
