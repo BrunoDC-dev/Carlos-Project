@@ -2,8 +2,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 const bcrypt = require("bcryptjs");
 import { MongoClient, MongoClientOptions, ObjectId } from "mongodb";
-import { timeStamp } from "console";
-import { cookies } from "next/dist/client/components/headers";
 const { v4: uuidv4 } = require("uuid");
 type Data = {
   message?: string;
@@ -19,15 +17,12 @@ export default async function handler(
 ) {
   if (req.method === "POST") {
     try {
-      const { password } = req.body;
       const { email } = req.body;
-      const { session } = req.body;
+      const { sessionId } = req.body;
 
-      // Ensure that the password is provided
-      if (!password) {
-        return res.status(400).json({ error: "Password is required." });
+      if (!email || !sessionId) {
+        return res.status(400).json({ error: "No session" });
       }
-
       // Get the MongoDB connection string and ID from the environment variables
       const MONGODB_URI = process.env.MONGODB_URI!;
 
@@ -44,40 +39,24 @@ export default async function handler(
         .find({ email: email })
         .toArray();
       if (result.length > 0) {
-        let compare = await bcrypt.compare(password, result[0].password);
-        if (compare) {
-          client.close();
-          const objecId = result[0]._id;
-
-          const sessionId = uuidv4();
-          const session_created = await db.collection("sessions").updateOne(
-            { owner_id: objecId.toString() },
-            {
-              $set: {
-                sessionId: sessionId,
-                owner_id: objecId.toString(),
-                timestamp: Date.now(),
-              },
-            },
-            { upsert: true },
-          );
-          if (session) {
+        const objectId = result[0]._id;
+        const resultSession = await db
+          .collection("sessions")
+          .find({ owner_id: objectId.toString() })
+          .toArray();
+        if (resultSession.length > 0) {
+          if (resultSession[0].sessionId == sessionId) {
             return res.status(200).json({
               message: "Logueado.",
-              sessionId: sessionId,
-              remember: true,
             });
+          } else {
+            return res.status(400).json({ error: "No session" });
           }
-          return res.status(200).json({
-            message: "Logueado.",
-            sessionId: sessionId,
-            remember: false,
-          });
         } else {
-          return res.status(403).json({ message: "incorrecta Contrasenas." });
+          return res.status(401).json({ error: "No session" });
         }
       } else {
-        return res.status(403).json({ message: "incorrecta Email." });
+        return res.status(402).json({ error: "No session" });
       }
     } catch (error) {
       console.error("Unhandled Error:", error);

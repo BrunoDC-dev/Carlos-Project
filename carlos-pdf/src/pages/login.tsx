@@ -2,12 +2,37 @@ import Image from "next/image";
 import { Inter } from "next/font/google";
 import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
-
+import { useRouter } from "next/navigation";
+const Cookies = require("js-cookie");
 const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
   const [screenWidth, setScreenWidth] = useState(0);
+  const router = useRouter();
+  const loginChecker = async () => {
+    const data = {
+      email: Cookies.get("email"),
+      sessionId: Cookies.get("remis_session_id"),
+    };
+    const JSONdata = JSON.stringify(data);
+    const endpoint = "/api/session";
+    const options = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSONdata,
+    };
+    try {
+      const response_dirty = await fetch(endpoint, options);
+      if (response_dirty.status === 200) {
+        router.push("/");
+      }
+    } catch (error) {}
+  };
+
   useEffect(() => {
+    loginChecker();
     const updateScreenWidth = () => {
       setScreenWidth(window.innerWidth);
     };
@@ -21,6 +46,7 @@ export default function Home() {
     // Clean up event listener on unmount
     return () => window.removeEventListener("resize", updateScreenWidth);
   }, []);
+
   const handleSubmit = async (event: any) => {
     event.preventDefault();
     Swal.fire({
@@ -54,6 +80,15 @@ export default function Home() {
         console.log(response_clean);
         // Update the Swal modal content with the result message
         Swal.hideLoading();
+        if (response_clean.remember) {
+          Cookies.set("remis_session_id", response_clean.sessionId, {
+            expires: 365,
+          });
+          Cookies.set("email", data.email, { expires: 365 });
+        } else {
+          Cookies.set("remis_session_id", response_clean.sessionId);
+          Cookies.set("email", data.email);
+        }
         Swal.update({
           title: "Success!", // Update the title to your success message
           text: "Form submitted successfully!", // Update the text to your success message
