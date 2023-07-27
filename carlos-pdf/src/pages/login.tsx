@@ -3,7 +3,7 @@ import { Inter } from "next/font/google";
 import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import { useRouter } from "next/navigation";
-import LoaderLogo from "@/components/loaderLogo";
+import LoaderLogo from "@/components/LoaderLogo";
 const Cookies = require("js-cookie");
 const inter = Inter({ subsets: ["latin"] });
 

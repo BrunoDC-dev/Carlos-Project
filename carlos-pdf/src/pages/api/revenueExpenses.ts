@@ -65,7 +65,7 @@ export default async function handler(
                 total_Revenue += parseFloat(revenue.toString());
                 total_expenses += parseFloat(expenses.toString());
               }
-              console.log(car_revenue_array);
+              //console.log(car_revenue_array);
               let data = {
                 car_name: car_info_array[0].car_name,
                 driver_name: car_info_array[0].driver_name,
