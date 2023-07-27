@@ -1,12 +1,42 @@
 import Image from "next/image";
+import { useState } from "react";
 import { Inter } from "next/font/google";
 import MonthCard from "@/components/MonthCard";
 import VehicleCard from "@/components/VehicleCard";
 import { Swiper, SwiperSlide } from "swiper/react";
+import { useRouter } from "next/navigation";
+import LoaderLogo from "@/components/loaderLogo";
+const Cookies = require("js-cookie");
 import "swiper/css";
 const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
+  const [loading , setLoading]= useState(true)
+  const router = useRouter();
+  const dataFetching = async ()=>{}
+  const loginChecker = async () => {
+    const data = {
+      email: Cookies.get("email"),
+      sessionId: Cookies.get("remis_session_id"),
+    };
+    const JSONdata = JSON.stringify(data);
+    const endpoint = "/api/session";
+    const options = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSONdata,
+    };
+    try {
+      const response_dirty = await fetch(endpoint, options);
+      if (response_dirty.status === 200) {
+        setLoading(false)
+      }else{
+        router.push("/login");
+      }
+    } catch (error) {}
+  };
   let cars = ["id"];
   return (
     <main className="bg-[#f6f6f6] min-h-full">
