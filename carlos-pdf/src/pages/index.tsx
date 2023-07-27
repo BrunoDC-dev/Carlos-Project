@@ -11,9 +11,9 @@ import "swiper/css";
 const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
-  const [loading , setLoading]= useState(true)
+  const [loading, setLoading] = useState(true);
   const router = useRouter();
-  const dataFetching = async ()=>{}
+  const dataFetching = async () => {};
   const loginChecker = async () => {
     const data = {
       email: Cookies.get("email"),
@@ -31,8 +31,8 @@ export default function Home() {
     try {
       const response_dirty = await fetch(endpoint, options);
       if (response_dirty.status === 200) {
-        setLoading(false)
-      }else{
+        setLoading(false);
+      } else {
         router.push("/login");
       }
     } catch (error) {}

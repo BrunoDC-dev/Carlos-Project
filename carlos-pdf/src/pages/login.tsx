@@ -9,7 +9,7 @@ const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
   const [screenWidth, setScreenWidth] = useState(0);
-  const [loading , setLoading]= useState(true)
+  const [loading, setLoading] = useState(true);
   const router = useRouter();
   const loginChecker = async () => {
     const data = {
@@ -29,8 +29,8 @@ export default function Home() {
       const response_dirty = await fetch(endpoint, options);
       if (response_dirty.status === 200) {
         router.push("/");
-      }else{
-        setLoading(false)
+      } else {
+        setLoading(false);
       }
     } catch (error) {}
   };
@@ -126,10 +126,9 @@ export default function Home() {
     }
   };
 
-  return (
-    loading?
-    <LoaderLogo/>
-    :
+  return loading ? (
+    <LoaderLogo />
+  ) : (
     <main className="h-screen bg-[#ffff]">
       <div className=" h-screen">
         <div className="flex flex-row justify-center text-[#fffff] items-center w-full bg-[#355B3E]">
@@ -226,6 +225,5 @@ export default function Home() {
         </div>
       </div>
     </main>
-  
   );
 }

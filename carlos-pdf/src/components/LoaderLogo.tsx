@@ -7,18 +7,18 @@ const inter = Inter({ subsets: ["latin"] });
 const LoaderLogo = () => {
   return (
     <main className="w-screen h-screen">
-    <div className="h-full flex flex-col items-center bg-[#355B3E] justify-center">
-       <Triangle
-        height="120"
-        width="120"
-        color="#fafafa"
-        ariaLabel="triangle-loading"
-        wrapperStyle={{}}
-        visible={true}
-       />
-    <h1 className="text-[#ffff] text-xl ">Eclipse Lab</h1>
-    </div>
+      <div className="h-full flex flex-col items-center bg-[#355B3E] justify-center">
+        <Triangle
+          height="120"
+          width="120"
+          color="#fafafa"
+          ariaLabel="triangle-loading"
+          wrapperStyle={{}}
+          visible={true}
+        />
+        <h1 className="text-[#ffff] text-xl ">Eclipse Lab</h1>
+      </div>
     </main>
   );
-}
-export default LoaderLogo
+};
+export default LoaderLogo;
