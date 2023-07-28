@@ -4,6 +4,7 @@ const bcrypt = require("bcryptjs");
 import { MongoClient, MongoClientOptions, ObjectId } from "mongodb";
 import { data } from "autoprefixer";
 const { v4: uuidv4 } = require("uuid");
+
 type Data = {
   message?: string | any;
   error?: string;
@@ -14,12 +15,13 @@ type Data = {
 
 const MONGODB_URI = process.env.MONGODB_URI!;
 const queryMaker = async (database: string, filter: object) => {
-  const client = await MongoClient.connect(MONGODB_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  } as MongoClientOptions);
-  const db = client.db();
+    const client = await MongoClient.connect(MONGODB_URI, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+      } as MongoClientOptions);
+      const db = client.db();
   const result = await db.collection(database).find(filter).toArray();
+  client.close
   return result;
 };
 
@@ -41,7 +43,7 @@ export default async function handler(
         if (owner_query_result.length > 0) {
           const owner_id = owner_query_result[0]._id;
           const sesssion_query_result = await queryMaker("sessions", {
-            owner_id: owner_id.toString(),
+            owner_id: owner_id,
           });
 
           if (
