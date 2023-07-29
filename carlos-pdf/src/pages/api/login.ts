@@ -43,10 +43,10 @@ export default async function handler(
         .collection("users")
         .find({ email: email })
         .toArray();
+        client.close();
       if (result.length > 0) {
         let compare = await bcrypt.compare(password, result[0].password);
         if (compare) {
-          client.close();
           const objecId = result[0]._id;
 
           const sessionId = uuidv4();
@@ -55,7 +55,7 @@ export default async function handler(
             {
               $set: {
                 sessionId: sessionId,
-                owner_id: objecId.toString(),
+                owner_id: objecId,
                 timestamp: Date.now(),
               },
             },

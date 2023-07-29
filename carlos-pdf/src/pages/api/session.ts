@@ -42,8 +42,9 @@ export default async function handler(
         const objectId = result[0]._id;
         const resultSession = await db
           .collection("sessions")
-          .find({ owner_id: objectId.toString() })
+          .find({ owner_id: objectId })
           .toArray();
+          client.close();
         if (resultSession.length > 0) {
           if (resultSession[0].sessionId == sessionId) {
             return res.status(200).json({
@@ -56,6 +57,7 @@ export default async function handler(
           return res.status(401).json({ error: "No session" });
         }
       } else {
+        client.close();
         return res.status(402).json({ error: "No session" });
       }
     } catch (error) {

@@ -16,14 +16,16 @@ interface VehicleData {
   registration_number: string;
   driver_name: string;
   img_src: string;
-  revenue: number;
-  expenses: number;
+  recent_revenue: number;
+  recent_expenses: number;
 }
 
 export default function Home() {
   const [loading, setLoading] = useState(true);
-  const [revenue, setRevenue] = useState(0);
-  const [expenses, setExpenses] = useState(0);
+  const [recentRevenue, setRecentRevenue] = useState(0);
+  const [recentExpenses, setRecentExpenses] = useState(0);
+  const [previousRevenue, setPreviousRevenue] = useState(0);
+  const [previousExpenses, setPreviousExpenses] = useState(0);
   const [data, setData] = useState<VehicleData[]>([]);
   const router = useRouter();
   const dataFetching = async () => {
@@ -44,11 +46,26 @@ export default function Home() {
       const response_dirty = await fetch(endpoint, options);
       if (response_dirty.status === 200) {
         const response_clean = await response_dirty.json();
+        console.log(response_clean)
         setData(response_clean);
+        let recentExpensesSum = 0;
+        let recentRevenueSum = 0;
+        let previousExpensesSum = 0;
+        let previousRevenueSum = 0;
+  
+        // Loop through the response data and calculate the sums
         for (let index = 0; index < response_clean.length; index++) {
-          setExpenses(response_clean[index].expenses + expenses);
-          setRevenue(response_clean[index].revenue + revenue);
+          recentExpensesSum += response_clean[index].recent_expenses;
+          recentRevenueSum += response_clean[index].recent_revenue;
+          previousExpensesSum += response_clean[index].previous_expenses;
+          previousRevenueSum += response_clean[index].previous_revenue;
         }
+  
+        // Update the state with the calculated sums
+        setRecentExpenses(recentExpensesSum);
+        setRecentRevenue(recentRevenueSum);
+        setPreviousExpenses(previousExpensesSum);
+        setPreviousRevenue(previousRevenueSum);
         setLoading(false);
       }
     } catch (error) {}
@@ -102,18 +119,18 @@ export default function Home() {
           <h2 className="text-xl font-semibold text-gray-600">Novedades:</h2>
           <div className="flex flex-col items-center gap-8  py-8">
             <MonthCard
-              current_amount={revenue - expenses}
-              previous_amount={50}
+              current_amount={recentRevenue - recentExpenses}
+              previous_amount={previousRevenue-previousExpenses}
               topic="Rentabilidad"
             />
             <MonthCard
-              current_amount={revenue}
-              previous_amount={50}
+              current_amount={recentRevenue}
+              previous_amount={previousRevenue}
               topic="Facturacion"
             />
             <MonthCard
-              current_amount={expenses}
-              previous_amount={50}
+              current_amount={recentExpenses}
+              previous_amount={previousExpenses}
               topic="Gastos"
             />
           </div>
@@ -131,8 +148,8 @@ export default function Home() {
                     registration_number={item.registration_number}
                     driver_name={item.driver_name}
                     img_src="ds"
-                    generated_amount={item.revenue}
-                    wasted_amount={item.expenses}
+                    generated_amount={item.recent_revenue}
+                    wasted_amount={item.recent_expenses}
                   />
                 </SwiperSlide>
               );

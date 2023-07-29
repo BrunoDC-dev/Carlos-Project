@@ -2,6 +2,7 @@ import React from "react";
 import Image from "next/image";
 import { Icon } from "@iconify/react";
 import { useEffect, useState } from "react";
+import NewMonth from "./NewMonth";
 interface VehicleCardProps {
   car_name: string;
   registration_number: string;
@@ -12,7 +13,7 @@ interface VehicleCardProps {
 }
 const VehicleCard = (props: VehicleCardProps) => {
   const [screenWidth, setScreenWidth] = useState(0);
-
+  const [mesAccordion, setMesAccordion] = useState(false);
   useEffect(() => {
     const updateScreenWidth = () => {
       setScreenWidth(window.innerWidth);
@@ -62,7 +63,7 @@ const VehicleCard = (props: VehicleCardProps) => {
             className="text-3xl  text-[#2F70F2]"
             icon="material-symbols:savings-outline"
           />
-          <p className="pb-1 font-semibold text-lg">{rentabilidad}%</p>
+          <p className="pb-1 font-semibold text-lg">{Number.isNaN(rentabilidad)?0:rentabilidad}%</p>
         </div>
         <div className="flex flex-col items-center">
           <Icon
@@ -81,12 +82,14 @@ const VehicleCard = (props: VehicleCardProps) => {
           <p className="pb-1 font-semibold text-lg">${props.wasted_amount}</p>
         </div>
       </div>
-      <a
-        href=""
-        className="bg-[#355B3E] w-full text-center py-1 text-[#fafafa] font-normal rounded-b-lg  hover:bg-[#fafafa] hover:text-[#355B3E] "
+      <div  className="bg-[#355B3E] w-full text-[#fafafa] rounded-b-lg  hover:bg-[#fafafa] hover:text-[#355B3E] " onClick={()=>setMesAccordion(!mesAccordion)}>
+      <p  className=" text-center py-1 font-normal  "
       >
         Nuevo Mes
-      </a>
+      </p>
+      <NewMonth mesAccordion={mesAccordion}/>
+      </div>
+
     </div>
   );
 };

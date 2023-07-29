@@ -93,12 +93,7 @@ export default function Home() {
           Cookies.set("remis_session_id", response_clean.sessionId);
           Cookies.set("email", data.email);
         }
-        Swal.update({
-          title: "Success!", // Update the title to your success message
-          text: "Form submitted successfully!", // Update the text to your success message
-          icon: "success",
-          allowOutsideClick: true, // Allow the user to click outside the modal after getting the result
-        });
+        router.push("/");
       } else if (response_dirty.status === 403) {
         Swal.hideLoading();
         Swal.update({

@@ -1,9 +1,5 @@
-// Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import { NextApiRequest, NextApiResponse } from "next";
-const bcrypt = require("bcryptjs");
 import { MongoClient, MongoClientOptions, ObjectId } from "mongodb";
-import { data } from "autoprefixer";
-const { v4: uuidv4 } = require("uuid");
 
 type Data = {
   message?: string | any;
@@ -14,21 +10,36 @@ type Data = {
 };
 
 const MONGODB_URI = process.env.MONGODB_URI!;
-const queryMaker = async (database: string, filter: object) => {
-    const client = await MongoClient.connect(MONGODB_URI, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-      } as MongoClientOptions);
-      const db = client.db();
-  const result = await db.collection(database).find(filter).toArray();
-  client.close
+
+// Define custom type for aggregation pipeline stages
+type AggregationPipelineStage =
+  | { $match: object }
+  | { $lookup: object }
+  | { $sort: object }
+  | { $limit: number }; 
+
+const queryMaker = async (
+  database: string,
+  filter: object,
+  pipeline: AggregationPipelineStage[] = []
+) => {
+  const client = await MongoClient.connect(MONGODB_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  } as MongoClientOptions);
+  const db = client.db();
+
+  const aggregationPipeline = [...pipeline, { $match: filter }];
+
+  const result = await db
+    .collection(database)
+    .aggregate(aggregationPipeline)
+    .toArray();
+  client.close();
   return result;
 };
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse<Data>,
-) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse<Data>) {
   if (req.method === "POST") {
     try {
       const { email } = req.body;
@@ -40,43 +51,52 @@ export default async function handler(
 
       try {
         const owner_query_result = await queryMaker("users", { email: email });
+
         if (owner_query_result.length > 0) {
           const owner_id = owner_query_result[0]._id;
-          const sesssion_query_result = await queryMaker("sessions", {
-            owner_id: owner_id,
-          });
 
-          if (
-            sesssion_query_result.length > 0 &&
-            sesssion_query_result[0].sessionId == sessionId
-          ) {
-            const cars_id_array = owner_query_result[0].cars;
+          // Perform the join with the cars collection using the owner_id field
+          const cars_join_options = {
+            from: "cars",
+            localField: "_id",
+            foreignField: "owner_id",
+            as: "cars_data",
+          };
+
+          const joinedResult = await queryMaker("users", { _id: owner_id }, [
+            { $lookup: cars_join_options },
+          ]);
+
+          if (joinedResult.length > 0) {
+            const cars_data = joinedResult[0].cars_data;
+            // Process the joined data as needed
             let response: any = [];
-            for (let index = 0; index < cars_id_array.length; index++) {
-              const car_id = cars_id_array[index];
-              const car_info_array = await queryMaker("cars", {
-                _id: new ObjectId(car_id),
-              });
+            for (const car of cars_data) {
               const car_revenue_array = await queryMaker("Revenue_Expenses", {
-                car_id: car_id,
-              });
-              let total_Revenue = 0;
-              let total_expenses = 0;
-              for (let index = 0; index < car_revenue_array.length; index++) {
-                const { expenses, revenue } = car_revenue_array[index];
-                total_Revenue += parseFloat(revenue.toString());
-                total_expenses += parseFloat(expenses.toString());
-              }
-              //console.log(car_revenue_array);
+                car_id: car._id,
+              }, [
+                { $sort: { date: -1 } }, // Sort by timestamp in descending order
+                { $limit: 2 }, // Limit to the two most recent documents
+              ]);
+              // Extract the most recent and previous revenue entries
+              const recentRevenue = car_revenue_array[0]?.revenue || 0;
+              const previousRevenue = car_revenue_array[1]?.revenue || 0;
+              const recentExpenses = car_revenue_array[0]?.expenses || 0;
+              const previousExpenses = car_revenue_array[1]?.expenses || 0;
+
+
               let data = {
-                car_name: car_info_array[0].car_name,
-                driver_name: car_info_array[0].driver_name,
-                registration_number: car_info_array[0].registration_number,
-                revenue: total_Revenue,
-                expenses: total_expenses,
+                car_name: car.car_name,
+                driver_name: car.driver_name,
+                registration_number: car.registration_number,
+                recent_revenue: parseFloat(recentRevenue.toString()),
+                previous_revenue: parseFloat(previousRevenue.toString()),
+                recent_expenses: parseFloat(recentExpenses.toString()),
+                previous_expenses: parseFloat(previousExpenses.toString()),
               };
               response.push(data);
             }
+
             return res.status(200).json(response);
           }
         }
