@@ -124,9 +124,9 @@ export default function Home() {
   return loading ? (
     <LoaderLogo />
   ) : (
-    <main className="h-screen bg-[#ffff]">
-      <div className=" h-screen">
-        <div className="flex flex-row justify-center text-[#fffff] items-center w-full bg-[#355B3E]">
+    <main className="h-screen bg-[#ffff] lg:bg-[#355B3E]">
+      <div className=" h-screen lg:flex lg:items-center lg:justify-center">
+        <div className="flex flex-row justify-center text-[#fffff] items-center w-full bg-[#355B3E] lg:hidden">
           <div className="max-w-[40px]">
             <Image
               src="/Logo.png"
@@ -137,14 +137,25 @@ export default function Home() {
           </div>
           <p className="w-fit text-[#ffff]">Eclipse Lab</p>
         </div>
-        <div>
+        <div className="lg:flex lg:flex-row-reverse">
           <Image
             src="/MobileLogin.png"
-            width={screenWidth}
-            height={screenWidth * 0.51}
+            width={screenWidth>768 ?screenWidth*0.5:screenWidth }
+            height={screenWidth>768 ?screenWidth*0.5:screenWidth * 0.51}
             alt="picture for login in desktop type "
           />
-          <div>
+          <div className="lg:bg-[#ffff] lg:pb-5 lg:px-3">
+          <div className="hidden lg:flex lg:items-center gap-8">
+            <div className="max-w-[40px]">
+            <Image
+              src="/LogoGreen.png"
+              width={40}
+              height={36}
+              alt="Picture of login for the web"
+            />
+          </div>
+          <p className="text-[#355B3E]">Eclipse Lab</p>
+            </div>
             <div className="px-5 py-5">
               <h3 className="text-[#355B3E] text-xl font-semibold leading-7 pb-3">
                 El mejor sistema de gestion de Remises

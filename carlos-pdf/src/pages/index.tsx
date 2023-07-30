@@ -4,9 +4,11 @@ import { Inter } from "next/font/google";
 import MonthCard from "@/components/MonthCard";
 import VehicleCard from "@/components/VehicleCard";
 import { Swiper, SwiperSlide } from "swiper/react";
+import { Pagination } from 'swiper/modules';
 import { useRouter } from "next/navigation";
 import LoaderLogo from "@/components/LoaderLogo";
 const Cookies = require("js-cookie");
+import 'swiper/css/pagination';
 import "swiper/css";
 import { it } from "node:test";
 const inter = Inter({ subsets: ["latin"] });
@@ -21,6 +23,7 @@ interface VehicleData {
 }
 
 export default function Home() {
+  const [screenWidth, setScreenWidth] = useState(0);
   const [loading, setLoading] = useState(true);
   const [recentRevenue, setRecentRevenue] = useState(0);
   const [recentExpenses, setRecentExpenses] = useState(0);
@@ -95,6 +98,19 @@ export default function Home() {
   };
   useEffect(() => {
     loginChecker();
+
+    const updateScreenWidth = () => {
+      setScreenWidth(window.innerWidth);
+    };
+
+    // Add event listener to update screen width on resize
+    window.addEventListener("resize", updateScreenWidth);
+
+    // Initial screen width
+    updateScreenWidth();
+
+    // Clean up event listener on unmount
+    return () => window.removeEventListener("resize", updateScreenWidth);
   }, []);
   return loading ? (
     <LoaderLogo />
@@ -111,13 +127,13 @@ export default function Home() {
         </div>
         <p className="w-fit">Eclipse Lab</p>
       </div>
-      <div className="px-2 py-5">
+      <div className="px-4 py-5">
         <h1 className="text-2xl font-bold text-[#2f3d4c]">
           Bienvenido de vuelta !!!
         </h1>
         <div className="py-2">
           <h2 className="text-xl font-semibold text-gray-600">Novedades:</h2>
-          <div className="flex flex-col items-center gap-8  py-8">
+          <div className="flex flex-col items-center gap-8 py-8 lg:flex-row ">
             <MonthCard
               current_amount={recentRevenue - recentExpenses}
               previous_amount={previousRevenue - previousExpenses}
@@ -139,7 +155,21 @@ export default function Home() {
           <h2 className="text-xl font-semibold text-gray-600 pb-8">
             Tus Camionetas:
           </h2>
-          <Swiper>
+          {screenWidth>700?(<div className="flex flex-row  flex-wrap justify-around ">
+            {data.map((item, index) => {
+              return (
+                  <VehicleCard
+                    car_name={item.car_name}
+                    registration_number={item.registration_number}
+                    driver_name={item.driver_name}
+                    img_src="ds"
+                    generated_amount={item.recent_revenue}
+                    wasted_amount={item.recent_expenses}
+                  />
+              );
+            })}
+            </div>):
+          <Swiper pagination={true} modules={[Pagination]}>
             {data.map((item, index) => {
               return (
                 <SwiperSlide key={index}>
@@ -155,6 +185,8 @@ export default function Home() {
               );
             })}
           </Swiper>
+            
+            }
         </div>
       </div>
     </main>

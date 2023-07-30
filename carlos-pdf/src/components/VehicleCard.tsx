@@ -2,7 +2,6 @@ import React from "react";
 import Image from "next/image";
 import { Icon } from "@iconify/react";
 import { useEffect, useState } from "react";
-import NewMonth from "./NewMonth";
 interface VehicleCardProps {
   car_name: string;
   registration_number: string;
@@ -13,7 +12,7 @@ interface VehicleCardProps {
 }
 const VehicleCard = (props: VehicleCardProps) => {
   const [screenWidth, setScreenWidth] = useState(0);
-  const [mesAccordion, setMesAccordion] = useState(false);
+
   useEffect(() => {
     const updateScreenWidth = () => {
       setScreenWidth(window.innerWidth);
@@ -38,7 +37,7 @@ const VehicleCard = (props: VehicleCardProps) => {
       <h4 className="text-lg font-semibold text-gray-600">{props.car_name}</h4>
       <Image
         src="/car.png"
-        width={screenWidth * 0.8}
+        width={screenWidth>700? screenWidth *0.29 :screenWidth* 0.8}
         height={screenWidth * 0.41}
         alt="picture for login in desktop type "
       />
@@ -86,11 +85,9 @@ const VehicleCard = (props: VehicleCardProps) => {
       </div>
       <div
         className="bg-[#355B3E] w-full text-[#fafafa] rounded-b-lg transition-all duration-300 ease-in-out flex flex-col items-center"
-        onClick={() => setMesAccordion(!mesAccordion)}
       >
         <p className=" text-center py-1 font-normal  ">Nuevo Mes</p>
       </div>
-      <NewMonth mesAccordion={mesAccordion} />
     </div>
   );
 };
