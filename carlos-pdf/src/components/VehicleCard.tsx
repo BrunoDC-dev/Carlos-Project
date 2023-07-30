@@ -63,7 +63,9 @@ const VehicleCard = (props: VehicleCardProps) => {
             className="text-3xl  text-[#2F70F2]"
             icon="material-symbols:savings-outline"
           />
-          <p className="pb-1 font-semibold text-lg">{Number.isNaN(rentabilidad)?0:rentabilidad}%</p>
+          <p className="pb-1 font-semibold text-lg">
+            {Number.isNaN(rentabilidad) ? 0 : rentabilidad}%
+          </p>
         </div>
         <div className="flex flex-col items-center">
           <Icon
@@ -82,13 +84,13 @@ const VehicleCard = (props: VehicleCardProps) => {
           <p className="pb-1 font-semibold text-lg">${props.wasted_amount}</p>
         </div>
       </div>
-      <div  className="bg-[#355B3E] w-full text-[#fafafa] rounded-b-lg transition-all duration-300 ease-in-out flex flex-col items-center" onClick={()=>setMesAccordion(!mesAccordion)}>
-      <p  className=" text-center py-1 font-normal  "
+      <div
+        className="bg-[#355B3E] w-full text-[#fafafa] rounded-b-lg transition-all duration-300 ease-in-out flex flex-col items-center"
+        onClick={() => setMesAccordion(!mesAccordion)}
       >
-        Nuevo Mes
-      </p>
+        <p className=" text-center py-1 font-normal  ">Nuevo Mes</p>
       </div>
-      <NewMonth mesAccordion={mesAccordion}/>
+      <NewMonth mesAccordion={mesAccordion} />
     </div>
   );
 };

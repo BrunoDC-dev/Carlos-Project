@@ -44,7 +44,7 @@ export default async function handler(
           .collection("sessions")
           .find({ owner_id: objectId })
           .toArray();
-          client.close();
+        client.close();
         if (resultSession.length > 0) {
           if (resultSession[0].sessionId == sessionId) {
             return res.status(200).json({

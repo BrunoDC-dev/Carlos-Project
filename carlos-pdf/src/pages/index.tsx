@@ -46,13 +46,13 @@ export default function Home() {
       const response_dirty = await fetch(endpoint, options);
       if (response_dirty.status === 200) {
         const response_clean = await response_dirty.json();
-        console.log(response_clean)
+        console.log(response_clean);
         setData(response_clean);
         let recentExpensesSum = 0;
         let recentRevenueSum = 0;
         let previousExpensesSum = 0;
         let previousRevenueSum = 0;
-  
+
         // Loop through the response data and calculate the sums
         for (let index = 0; index < response_clean.length; index++) {
           recentExpensesSum += response_clean[index].recent_expenses;
@@ -60,7 +60,7 @@ export default function Home() {
           previousExpensesSum += response_clean[index].previous_expenses;
           previousRevenueSum += response_clean[index].previous_revenue;
         }
-  
+
         // Update the state with the calculated sums
         setRecentExpenses(recentExpensesSum);
         setRecentRevenue(recentRevenueSum);
@@ -120,7 +120,7 @@ export default function Home() {
           <div className="flex flex-col items-center gap-8  py-8">
             <MonthCard
               current_amount={recentRevenue - recentExpenses}
-              previous_amount={previousRevenue-previousExpenses}
+              previous_amount={previousRevenue - previousExpenses}
               topic="Rentabilidad"
             />
             <MonthCard

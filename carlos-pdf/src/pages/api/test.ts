@@ -16,12 +16,12 @@ type AggregationPipelineStage =
   | { $match: object }
   | { $lookup: object }
   | { $sort: object }
-  | { $limit: number }; 
+  | { $limit: number };
 
 const queryMaker = async (
   database: string,
   filter: object,
-  pipeline: AggregationPipelineStage[] = []
+  pipeline: AggregationPipelineStage[] = [],
 ) => {
   const client = await MongoClient.connect(MONGODB_URI, {
     useNewUrlParser: true,
@@ -39,7 +39,10 @@ const queryMaker = async (
   return result;
 };
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse<Data>) {
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse<Data>,
+) {
   if (req.method === "POST") {
     try {
       const { email } = req.body;
@@ -72,19 +75,22 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
             // Process the joined data as needed
             let response: any = [];
             for (const car of cars_data) {
-              const car_revenue_array = await queryMaker("Revenue_Expenses", {
-                car_id: car._id,
-              }, [
-                { $sort: { date: -1 } }, // Sort by timestamp in descending order
-                { $limit: 2 }, // Limit to the two most recent documents
-              ]);
-              console.log(car_revenue_array)
+              const car_revenue_array = await queryMaker(
+                "Revenue_Expenses",
+                {
+                  car_id: car._id,
+                },
+                [
+                  { $sort: { date: -1 } }, // Sort by timestamp in descending order
+                  { $limit: 2 }, // Limit to the two most recent documents
+                ],
+              );
+              console.log(car_revenue_array);
               // Extract the most recent and previous revenue entries
               const recentRevenue = car_revenue_array[0]?.revenue || 0;
               const previousRevenue = car_revenue_array[1]?.revenue || 0;
               const recentExpenses = car_revenue_array[0]?.expenses || 0;
               const previousExpenses = car_revenue_array[1]?.expenses || 0;
-
 
               let data = {
                 car_name: car.car_name,

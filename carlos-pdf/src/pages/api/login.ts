@@ -43,7 +43,7 @@ export default async function handler(
         .collection("users")
         .find({ email: email })
         .toArray();
-        client.close();
+      client.close();
       if (result.length > 0) {
         let compare = await bcrypt.compare(password, result[0].password);
         if (compare) {
