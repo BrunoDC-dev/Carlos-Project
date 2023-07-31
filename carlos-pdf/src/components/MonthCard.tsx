@@ -34,7 +34,7 @@ const MonthCard = (props: MonthCardProps) => {
   );
 
   return (
-    <div className="bg-[#ffff] rounded-xl w-4/5 shadow-lg px-4 py-3 flex flex-col items-center gap-3">
+    <div className="bg-[#ffff] rounded-xl w-4/5 shadow-lg px-4 py-3 flex flex-col items-center gap-3 lg:w-1/4">
       <p className="text-[#2F70F2] text-[#876AFE] text-[#FFBC02]"></p>
       <div className="flex flex-row items-center w-full gap-2 text-base font-semibold">
         <Icon className={`text-2xl lg:text-4xl text-[${color_title}]`} icon={icon} />

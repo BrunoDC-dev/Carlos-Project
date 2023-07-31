@@ -138,13 +138,20 @@ export default function Home() {
           <p className="w-fit text-[#ffff]">Eclipse Lab</p>
         </div>
         <div className="lg:flex lg:flex-row-reverse">
+          {screenWidth>768? <Image
+            src="/DesktopCar.png"
+            width={screenWidth*0.45 }
+            height={screenWidth * 0.51}
+            alt="picture for login in desktop type "
+            className="lg:rounded-r-2xl"
+          />:
           <Image
             src="/MobileLogin.png"
-            width={screenWidth>768 ?screenWidth*0.5:screenWidth }
-            height={screenWidth>768 ?screenWidth*0.5:screenWidth * 0.51}
+            width={screenWidth }
+            height={screenWidth * 0.51}
             alt="picture for login in desktop type "
-          />
-          <div className="lg:bg-[#ffff] lg:pb-5 lg:px-3">
+          />}
+          <div className="lg:bg-[#ffff] lg:py-8 lg:px-10  lg:rounded-l-2xl lg:flex lg:flex-col lg:gap-3">
           <div className="hidden lg:flex lg:items-center gap-8">
             <div className="max-w-[40px]">
             <Image
@@ -154,9 +161,9 @@ export default function Home() {
               alt="Picture of login for the web"
             />
           </div>
-          <p className="text-[#355B3E]">Eclipse Lab</p>
+          <p className="text-[#355B3E] text-2xl font-bold">Eclipse Lab</p>
             </div>
-            <div className="px-5 py-5">
+            <div className="lg:px-0 px-5 py-5">
               <h3 className="text-[#355B3E] text-xl font-semibold leading-7 pb-3">
                 El mejor sistema de gestion de Remises
               </h3>
@@ -166,7 +173,7 @@ export default function Home() {
             </div>
             <form
               onSubmit={handleSubmit}
-              className="flex flex-col px-5 items-center"
+              className="flex flex-col px-5 lg:px-0 items-center lg:gap-5"
             >
               <div className="flex flex-col py-2 w-full">
                 <label
@@ -222,7 +229,7 @@ export default function Home() {
               </div>
               <button
                 type="submit"
-                className=" w-3/5 py-5 rounded-lg bg-[#029664] text-base font-semibold leading-4 text-[#ffff]"
+                className=" w-3/5 py-5 rounded-lg bg-[#029664] text-base font-semibold leading-4 text-[#ffff] lg:text-xl lg:py-3"
               >
                 Entrar
               </button>

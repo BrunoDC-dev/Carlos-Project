@@ -83,11 +83,15 @@ const VehicleCard = (props: VehicleCardProps) => {
           <p className="pb-1 font-semibold text-lg">${props.wasted_amount}</p>
         </div>
       </div>
+      <a href="/car">
       <div
         className="bg-[#355B3E] w-full text-[#fafafa] rounded-b-lg transition-all duration-300 ease-in-out flex flex-col items-center"
       >
-        <p className=" text-center py-1 font-normal  ">Nuevo Mes</p>
+        <p className=" text-center py-1 font-normal  ">
+
+          Nuevo Mes</p>
       </div>
+          </a>
     </div>
   );
 };

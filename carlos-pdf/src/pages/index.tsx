@@ -128,12 +128,12 @@ export default function Home() {
         <p className="w-fit">Eclipse Lab</p>
       </div>
       <div className="px-4 py-5">
-        <h1 className="text-2xl font-bold text-[#2f3d4c]">
+        <h1 className="text-2xl font-bold text-[#2f3d4c] lg:text-4xl">
           Bienvenido de vuelta !!!
         </h1>
         <div className="py-2">
-          <h2 className="text-xl font-semibold text-gray-600">Novedades:</h2>
-          <div className="flex flex-col items-center gap-8 py-8 lg:flex-row ">
+          <h2 className="text-xl font-semibold text-gray-600 lg:text-center lg:text-2xl">Novedades:</h2>
+          <div className="flex flex-col items-center gap-8 py-8 lg:flex-row lg:justify-around ">
             <MonthCard
               current_amount={recentRevenue - recentExpenses}
               previous_amount={previousRevenue - previousExpenses}
@@ -152,7 +152,7 @@ export default function Home() {
           </div>
         </div>
         <div>
-          <h2 className="text-xl font-semibold text-gray-600 pb-8">
+          <h2 className="text-xl font-semibold text-gray-600 pb-8 lg:text-center lg:text-2xl">
             Tus Camionetas:
           </h2>
           {screenWidth>700?(<div className="flex flex-row  flex-wrap justify-around ">
