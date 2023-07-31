@@ -4,11 +4,11 @@ import { Inter } from "next/font/google";
 import MonthCard from "@/components/MonthCard";
 import VehicleCard from "@/components/VehicleCard";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Pagination } from 'swiper/modules';
+import { Pagination } from "swiper/modules";
 import { useRouter } from "next/navigation";
 import LoaderLogo from "@/components/LoaderLogo";
 const Cookies = require("js-cookie");
-import 'swiper/css/pagination';
+import "swiper/css/pagination";
 import "swiper/css";
 import { it } from "node:test";
 const inter = Inter({ subsets: ["latin"] });
@@ -132,7 +132,9 @@ export default function Home() {
           Bienvenido de vuelta !!!
         </h1>
         <div className="py-2">
-          <h2 className="text-xl font-semibold text-gray-600 lg:text-center lg:text-2xl">Novedades:</h2>
+          <h2 className="text-xl font-semibold text-gray-600 lg:text-center lg:text-2xl">
+            Novedades:
+          </h2>
           <div className="flex flex-col items-center gap-8 py-8 lg:flex-row lg:justify-around ">
             <MonthCard
               current_amount={recentRevenue - recentExpenses}
@@ -155,9 +157,10 @@ export default function Home() {
           <h2 className="text-xl font-semibold text-gray-600 pb-8 lg:text-center lg:text-2xl">
             Tus Camionetas:
           </h2>
-          {screenWidth>700?(<div className="flex flex-row  flex-wrap justify-around ">
-            {data.map((item, index) => {
-              return (
+          {screenWidth > 700 ? (
+            <div className="flex flex-row  flex-wrap justify-around ">
+              {data.map((item, index) => {
+                return (
                   <VehicleCard
                     car_name={item.car_name}
                     registration_number={item.registration_number}
@@ -166,27 +169,27 @@ export default function Home() {
                     generated_amount={item.recent_revenue}
                     wasted_amount={item.recent_expenses}
                   />
-              );
-            })}
-            </div>):
-          <Swiper pagination={true} modules={[Pagination]}>
-            {data.map((item, index) => {
-              return (
-                <SwiperSlide key={index}>
-                  <VehicleCard
-                    car_name={item.car_name}
-                    registration_number={item.registration_number}
-                    driver_name={item.driver_name}
-                    img_src="ds"
-                    generated_amount={item.recent_revenue}
-                    wasted_amount={item.recent_expenses}
-                  />
-                </SwiperSlide>
-              );
-            })}
-          </Swiper>
-            
-            }
+                );
+              })}
+            </div>
+          ) : (
+            <Swiper pagination={true} modules={[Pagination]}>
+              {data.map((item, index) => {
+                return (
+                  <SwiperSlide key={index}>
+                    <VehicleCard
+                      car_name={item.car_name}
+                      registration_number={item.registration_number}
+                      driver_name={item.driver_name}
+                      img_src="ds"
+                      generated_amount={item.recent_revenue}
+                      wasted_amount={item.recent_expenses}
+                    />
+                  </SwiperSlide>
+                );
+              })}
+            </Swiper>
+          )}
         </div>
       </div>
     </main>

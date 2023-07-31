@@ -37,7 +37,7 @@ const VehicleCard = (props: VehicleCardProps) => {
       <h4 className="text-lg font-semibold text-gray-600">{props.car_name}</h4>
       <Image
         src="/car.png"
-        width={screenWidth>700? screenWidth *0.29 :screenWidth* 0.8}
+        width={screenWidth > 700 ? screenWidth * 0.29 : screenWidth * 0.8}
         height={screenWidth * 0.41}
         alt="picture for login in desktop type "
       />
@@ -83,15 +83,9 @@ const VehicleCard = (props: VehicleCardProps) => {
           <p className="pb-1 font-semibold text-lg">${props.wasted_amount}</p>
         </div>
       </div>
-      <a href="/car">
-      <div
-        className="bg-[#355B3E] w-full text-[#fafafa] rounded-b-lg transition-all duration-300 ease-in-out flex flex-col items-center"
-      >
-        <p className=" text-center py-1 font-normal  ">
-
-          Nuevo Mes</p>
+      <div className="bg-[#355B3E] w-full text-[#fafafa] rounded-b-lg transition-all duration-300 ease-in-out flex flex-col items-center">
+        <p className=" text-center py-1 font-normal  ">Nuevo Mes</p>
       </div>
-          </a>
     </div>
   );
 };

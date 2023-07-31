@@ -138,30 +138,33 @@ export default function Home() {
           <p className="w-fit text-[#ffff]">Eclipse Lab</p>
         </div>
         <div className="lg:flex lg:flex-row-reverse">
-          {screenWidth>768? <Image
-            src="/DesktopCar.png"
-            width={screenWidth*0.45 }
-            height={screenWidth * 0.51}
-            alt="picture for login in desktop type "
-            className="lg:rounded-r-2xl"
-          />:
-          <Image
-            src="/MobileLogin.png"
-            width={screenWidth }
-            height={screenWidth * 0.51}
-            alt="picture for login in desktop type "
-          />}
-          <div className="lg:bg-[#ffff] lg:py-8 lg:px-10  lg:rounded-l-2xl lg:flex lg:flex-col lg:gap-3">
-          <div className="hidden lg:flex lg:items-center gap-8">
-            <div className="max-w-[40px]">
+          {screenWidth > 768 ? (
             <Image
-              src="/LogoGreen.png"
-              width={40}
-              height={36}
-              alt="Picture of login for the web"
+              src="/DesktopCar.png"
+              width={screenWidth * 0.45}
+              height={screenWidth * 0.51}
+              alt="picture for login in desktop type "
+              className="lg:rounded-r-2xl"
             />
-          </div>
-          <p className="text-[#355B3E] text-2xl font-bold">Eclipse Lab</p>
+          ) : (
+            <Image
+              src="/MobileLogin.png"
+              width={screenWidth}
+              height={screenWidth * 0.51}
+              alt="picture for login in desktop type "
+            />
+          )}
+          <div className="lg:bg-[#ffff] lg:py-8 lg:px-10  lg:rounded-l-2xl lg:flex lg:flex-col lg:gap-3">
+            <div className="hidden lg:flex lg:items-center gap-8">
+              <div className="max-w-[40px]">
+                <Image
+                  src="/LogoGreen.png"
+                  width={40}
+                  height={36}
+                  alt="Picture of login for the web"
+                />
+              </div>
+              <p className="text-[#355B3E] text-2xl font-bold">Eclipse Lab</p>
             </div>
             <div className="lg:px-0 px-5 py-5">
               <h3 className="text-[#355B3E] text-xl font-semibold leading-7 pb-3">
