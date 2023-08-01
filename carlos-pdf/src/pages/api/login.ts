@@ -43,7 +43,6 @@ export default async function handler(
         .collection("users")
         .find({ email: email })
         .toArray();
-      client.close();
       if (result.length > 0) {
         let compare = await bcrypt.compare(password, result[0].password);
         if (compare) {
@@ -51,7 +50,7 @@ export default async function handler(
 
           const sessionId = uuidv4();
           const session_created = await db.collection("sessions").updateOne(
-            { owner_id: objecId.toString() },
+            { owner_id: objecId },
             {
               $set: {
                 sessionId: sessionId,
@@ -60,7 +59,9 @@ export default async function handler(
               },
             },
             { upsert: true },
+            
           );
+          client.close();
           if (session) {
             return res.status(200).json({
               message: "Logueado.",
@@ -77,6 +78,7 @@ export default async function handler(
           return res.status(403).json({ message: "incorrecta Contrasenas." });
         }
       } else {
+        client.close();
         return res.status(403).json({ message: "incorrecta Email." });
       }
     } catch (error) {
