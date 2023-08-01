@@ -3,7 +3,7 @@ import { useRouter } from "next/navigation";
 import LoaderLogo from "@/components/LoaderLogo";
 const Cookies = require("js-cookie");
 export default function Home() {
-  const [loading , setLoading]=useState(false)
+  const [loading , setLoading]=useState(true)
   const [carsData , setCarsData]=useState([])
   const [money , setMoney]=useState(0)
   const router = useRouter();
@@ -45,7 +45,8 @@ export default function Home() {
   ) : (
     <main className="bg-[#f6f6f6] min-h-full">
       <div>
-        <h1>Caja: {money}</h1>
+        <h1>Balance de Cuenta</h1>
+        <h2>Caja: {money}</h2>
       </div>
       <form action="">
         {
@@ -67,7 +68,10 @@ export default function Home() {
                   <div>
                       {Object.keys( item.expenses).map((gasto)=>{
                         return(
-                        <h1>{gasto}</h1>
+                          <div>
+                            <label htmlFor={item.registration_number+":"+gasto}>{gasto}</label>
+                            <input type="number" name={item.registration_number+":"+gasto}  value={item.expenses[gasto]} id="" />
+                            </div>
                         )
                       })
 
