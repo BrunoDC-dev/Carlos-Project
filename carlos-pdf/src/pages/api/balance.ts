@@ -74,10 +74,7 @@ export default async function handler(
             owner_query_result[0].session_data.length > 0 &&
             owner_query_result[0].session_data[0].sessionId == sessionId
           ) {
-             
-                return res.status(200).json({ message: owner_query_result[0] });
-              
-            
+            return res.status(200).json({ message: owner_query_result[0] });
           }
         }
         return res.status(403).json({ message: "forbidden" });

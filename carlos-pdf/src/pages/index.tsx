@@ -1,8 +1,9 @@
-import { useState,useEffect } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import LoaderLogo from "@/components/LoaderLogo";
 const Cookies = require("js-cookie");
+
 interface CarData {
   registration_number: string;
   driver_name: string;
@@ -13,8 +14,58 @@ interface CarData {
 export default function Home() {
   const [loading, setLoading] = useState(true);
   const [carsData, setCarsData] = useState<CarData[]>([]);
-  const [money , setMoney]=useState(0)
+  const [money, setMoney] = useState(0);
   const router = useRouter();
+
+  // New local state to store user input for revenue and expenses per car
+  const [carRevenues, setCarRevenues] = useState<{ [key: string]: number }>({});
+  const [carExpenses, setCarExpenses] = useState<{
+    [key: string]: { [key: string]: number };
+  }>({});
+
+  // Function to handle changes in revenue input fields
+  const handleRevenueChange = (registrationNumber: string, value: string) => {
+    // Remove leading zeros from the input value
+    const trimmedValue = value.replace(/^0+/, "");
+
+    // Set the parsedValue to 0 if it's an empty string or "0", otherwise parse it as an integer
+    const parsedValue =
+      trimmedValue === "" || trimmedValue === "0"
+        ? 0
+        : parseInt(trimmedValue, 10);
+
+    setCarRevenues((prevRevenues) => ({
+      ...prevRevenues,
+      [registrationNumber]: parsedValue,
+    }));
+  };
+
+  console.log(carRevenues);
+  console.log(carExpenses);
+  // Function to handle changes in expense input fields
+  const handleExpenseChange = (
+    registrationNumber: string,
+    expenseKey: string,
+    value: string,
+  ) => {
+    // Convert the input value to a number or set it to 0 if it's an empty string or NaN
+    const trimmedValue = value.replace(/^0+/, "");
+
+    // Convert the input value to a number or set it to 0 if it's an empty string or NaN
+    const parsedValue =
+      trimmedValue === "" || isNaN(parseInt(trimmedValue, 10))
+        ? 0
+        : parseInt(trimmedValue, 10);
+
+    setCarExpenses((prevExpenses) => ({
+      ...prevExpenses,
+      [registrationNumber]: {
+        ...prevExpenses[registrationNumber],
+        [expenseKey]: parsedValue,
+      },
+    }));
+  };
+
   const dataFetching = async () => {
     const data = {
       email: Cookies.get("email"),
@@ -31,27 +82,38 @@ export default function Home() {
     };
     try {
       const response_dirty = await fetch(endpoint, options);
-      if (response_dirty.status==403){
+      if (response_dirty.status === 403) {
         router.push("/login");
       }
-     const response_clean = await response_dirty.json();
-     console.log(response_clean)
-     setCarsData(response_clean.message.cars_data)
-     setMoney(response_clean.message.money)
+      const response_clean = await response_dirty.json();
+      console.log(response_clean);
+      setCarsData(response_clean.message.cars_data);
+      setMoney(response_clean.message.money);
+      const initialCarRevenues: { [key: string]: number } = {};
+      const initialCarExpenses: { [key: string]: { [key: string]: number } } =
+        {};
 
-     setLoading(false)
-     
+      response_clean.message.cars_data.forEach((car: CarData) => {
+        initialCarRevenues[car.registration_number] = car.revenue;
+        initialCarExpenses[car.registration_number] = { ...car.expenses };
+      });
+
+      setCarRevenues(initialCarRevenues);
+      setCarExpenses(initialCarExpenses);
+      setLoading(false);
     } catch (error) {
-      
+      // Handle error, if needed
     }
-  }
+  };
+
   useEffect(() => {
-    dataFetching()
+    dataFetching();
   }, []);
+
   return loading ? (
     <LoaderLogo />
   ) : (
-    <main className="bg-[#f6f6f6]  flex flex-col items-center h-screen gap-6">
+    <main className="bg-[#f6f6f6] flex flex-col items-center h-screen gap-6">
       <div className="py-1 flex flex-row justify-center items-center w-full text-[#ffff] bg-[#355B3E]">
         <div className="max-w-[40px]">
           <Image
@@ -67,43 +129,100 @@ export default function Home() {
         <h1 className="text-xl font-bold text-gray-800">Balance de Cuenta:</h1>
         <h2 className="text-lg font-semibold text-gray-600">Caja: {money}</h2>
       </div>
-      <form action="" className=" flex flex-col items-center gap-5 px-6 py-2 w-full">
-        {
-          carsData.map((item,index)=>{
-            return(
-              <div className=" flex flex-col  gap-2  bg-[#355B3E] shadow-2xl  py-5 rounded-2xl px-3">
-                    <p className="text-lg text-center font-semibold text-[#fafafa]">Vehiculo:<span className="font-normal text-sm"> {item.registration_number}</span></p>
-                    <p className="text-base font-semibold  pl-3 text-gray-300 ">Conductor: <span className="font-normal text-sm">{item.driver_name}</span></p>
-                 
-                <div className=" flex flex-col gap-1">
-                  <h1 className="text-lg font-bold text-gray-100 ">Ganancias:</h1>
-                  <div  className="flex flex-row flex-wrap gap-2 pl-3 justify-between pr-3">
-                  <label htmlFor={"revenue"+ item.registration_number}  className="text-base font-semibold text-gray-300 ">Facturacion:</label>
-                  <input type="number" name={"revenue"+ item.registration_number} className="px-1 py-[2px] text-sm font-bold w-2/6 rounded-lg text-center shadow-lg"  value={item.revenue} id="" />
-                  </div>
+      <form
+        action=""
+        className="flex flex-col items-center gap-5 px-6 py-2 w-full"
+        onSubmit={(e) => {
+          e.preventDefault();
+          // Handle form submission, if needed
+        }}
+      >
+        {carsData.map((item, index) => {
+          return (
+            <div
+              className="flex flex-col gap-2 bg-[#355B3E] shadow-2xl py-5 rounded-2xl px-3"
+              key={index}
+            >
+              <p className="text-lg text-center font-semibold text-[#fafafa]">
+                Vehiculo:
+                <span className="font-normal text-sm">
+                  {" "}
+                  {item.registration_number}
+                </span>
+              </p>
+              <p className="text-base font-semibold pl-3 text-gray-300">
+                Conductor:{" "}
+                <span className="font-normal text-sm">{item.driver_name}</span>
+              </p>
 
-                </div>
-                <div className=" flex flex-col gap-1">
-                  <h1 className="text-lg font-bold text-gray-100 ">Gastos</h1>
-                  <div className=" flex flex-col gap-1">
-                      {Object.keys( item.expenses).map((gasto)=>{
-                        return(
-                          <div className="flex flex-row flex-wrap gap-2 pl-3 justify-between pr-3">
-                            <label htmlFor={item.registration_number+":"+gasto}  className="text-base font-semibold text-gray-300 ">{gasto}</label>
-                            <input  className="px-1 py-[2px] w-2/6 rounded-lg text-center shadow-lg text-sm font-bold" type="number" name={item.registration_number+":"+gasto}  value={item.expenses[gasto]} id="" />
-                            </div>
-                        )
-                      })
-
-                      }
-                  </div>
+              <div className="flex flex-col gap-1">
+                <h1 className="text-lg font-bold text-gray-100">Ganancias:</h1>
+                <div className="flex flex-row flex-wrap gap-2 pl-3 justify-between pr-3">
+                  <label
+                    htmlFor={"revenue" + item.registration_number}
+                    className="text-base font-semibold text-gray-300"
+                  >
+                    Facturacion:
+                  </label>
+                  <input
+                    type="number"
+                    name={"revenue" + item.registration_number}
+                    className="px-1 py-[2px] text-sm font-bold w-2/6 rounded-lg text-center shadow-lg"
+                    placeholder={item.revenue.toString()}
+                    id=""
+                    onChange={(e) =>
+                      handleRevenueChange(
+                        item.registration_number,
+                        e.target.value,
+                      )
+                    }
+                  />
                 </div>
               </div>
-            )
-          })
-        }
-        <button type="submit" className="text-xl border-solid border-4 py-2 rounded-full w-fit border-[#355B3E] font-bold px-6 text-[#121212] hover:bg-[#355b3e] hover:text-[#fafafa] transition-all ease-in-out">Enviar</button>
-        </form>
+              <div className="flex flex-col gap-1">
+                <h1 className="text-lg font-bold text-gray-100">Gastos</h1>
+                <div className="flex flex-col gap-1">
+                  {Object.keys(item.expenses).map((gasto) => {
+                    return (
+                      <div
+                        className="flex flex-row flex-wrap gap-2 pl-3 justify-between pr-3"
+                        key={gasto}
+                      >
+                        <label
+                          htmlFor={item.registration_number + ":" + gasto}
+                          className="text-base font-semibold text-gray-300"
+                        >
+                          {gasto}
+                        </label>
+                        <input
+                          className="px-1 py-[2px] w-2/6 rounded-lg text-center shadow-lg text-sm font-bold"
+                          type="number"
+                          name={item.registration_number + ":" + gasto}
+                          placeholder={item.expenses[gasto].toString()}
+                          id=""
+                          onChange={(e) =>
+                            handleExpenseChange(
+                              item.registration_number,
+                              gasto,
+                              e.target.value,
+                            )
+                          }
+                        />
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          );
+        })}
+        <button
+          type="submit"
+          className="text-xl border-solid border-4 py-2 rounded-full w-fit border-[#355B3E] font-bold px-6 text-[#121212] hover:bg-[#355b3e] hover:text-[#fafafa] transition-all ease-in-out"
+        >
+          Enviar
+        </button>
+      </form>
     </main>
   );
 }

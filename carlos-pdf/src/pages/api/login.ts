@@ -59,7 +59,6 @@ export default async function handler(
               },
             },
             { upsert: true },
-            
           );
           client.close();
           if (session) {
