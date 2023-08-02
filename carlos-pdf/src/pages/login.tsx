@@ -84,6 +84,12 @@ export default function Home() {
         console.log(response_clean);
         // Update the Swal modal content with the result message
         Swal.hideLoading();
+        Swal.update({
+          title: "Exitos!",
+          text: "Datos de sesion correctos",
+          icon: "success",
+          allowOutsideClick: true,
+        });
         if (response_clean.remember) {
           Cookies.set("remis_session_id", response_clean.sessionId, {
             expires: 365,
