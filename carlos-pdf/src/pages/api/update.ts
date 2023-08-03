@@ -142,6 +142,7 @@ export default async function handler(
               expenses: gastoTotal,
               diferencia: revenueTotal - gastoTotal,
             });
+            return res.status(200).json({message:"exitos"})
           }
         }
       } catch (error) {

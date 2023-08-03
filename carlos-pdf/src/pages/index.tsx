@@ -111,70 +111,87 @@ export default function Home() {
 
   const handleSubmit = async (event: any) => {
     event.preventDefault();
-    /*Swal.fire({
-      title: "Verificando usuario",
-      didOpen: () => {
-        Swal.showLoading();
-      },
-      allowOutsideClick: false, // Prevents the user from taking away the loader
-    });*/
-
-    const data = {
-      email: Cookies.get("email"),
-      sessionId: Cookies.get("remis_session_id"),
-      revenue: carRevenues,
-      expenses: carExpenses,
-      caja: money,
-    };
-    const JSONdata = JSON.stringify(data);
-    const endpoint = "/api/update";
-    const options = {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSONdata,
-    };
-
-    try {
-      const response_dirty = await fetch(endpoint, options);
-
-      if (response_dirty.status === 200) {
-        const response_clean = await response_dirty.json();
-        console.log(response_clean);
-        // Update the Swal modal content with the result message
-        Swal.hideLoading();
-        Swal.update({
-          title: "Exitos!",
-          text: "Datos de sesion correctos",
-          icon: "success",
-          allowOutsideClick: true,
+    Swal.fire({
+      title: "Por favor revisa los datos",
+      text: "Ten en cuenta que esta infromacion quedara almaceneda asi que prfavor asegurese de encviar datos correctos",
+      icon: "info",
+      confirmButtonText: "Enviar",
+      showCancelButton: true,
+      cancelButtonText: "Revisar",
+      allowOutsideClick: false,
+    }).then(async(result) => {
+      if (result.isConfirmed) {
+        Swal.close()
+        Swal.fire({
+          title: "Enviando datos",
+          didOpen: () => {
+            Swal.showLoading();
+          },
+          allowOutsideClick: false, // Prevents the user from taking away the loader
         });
-      } else if (response_dirty.status === 403) {
-        Swal.hideLoading();
-        Swal.update({
-          title: "Error!",
-          text: "Datos de inicio de sesión incorrectos",
-          icon: "error",
-          allowOutsideClick: true,
-        });
-      } else {
-        Swal.update({
-          title: "Error!",
-          text: "Servidor en mantenimiento, vuelva a intentarlo más tarde",
-          icon: "error",
-          allowOutsideClick: true,
-        });
+    
+        const data = {
+          email: Cookies.get("email"),
+          sessionId: Cookies.get("remis_session_id"),
+          revenue: carRevenues,
+          expenses: carExpenses,
+          caja: money,
+        };
+        const JSONdata = JSON.stringify(data);
+        const endpoint = "/api/update";
+        const options = {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSONdata,
+        };
+    
+        try {
+          const response_dirty = await fetch(endpoint, options);
+    
+          if (response_dirty.status === 200) {
+            const response_clean = await response_dirty.json();
+            console.log(response_clean);
+            // Update the Swal modal content with the result message
+            Swal.hideLoading();
+            window.location.reload();
+            Swal.update({
+              title: "Exitos!",
+              text: "Datos de sesion correctos",
+              icon: "success",
+              allowOutsideClick: true,
+            });
+          } else if (response_dirty.status === 403) {
+            Swal.hideLoading();
+            Swal.update({
+              title: "Error!",
+              text: "Datos de inicio de sesión incorrectos",
+              icon: "error",
+              allowOutsideClick: true,
+            });
+          } else {
+            Swal.update({
+              title: "Error!",
+              text: "Servidor en mantenimiento, vuelva a intentarlo más tarde",
+              icon: "error",
+              allowOutsideClick: true,
+            });
+          }
+        } catch (error) {
+          Swal.hideLoading();
+          Swal.update({
+            title: "Error!",
+            text: "Hubo un error al procesar la solicitud",
+            icon: "error",
+            allowOutsideClick: true,
+          });
+        }
+      }else if (result.dismiss === Swal.DismissReason.cancel){
+        Swal.close()
       }
-    } catch (error) {
-      Swal.hideLoading();
-      Swal.update({
-        title: "Error!",
-        text: "Hubo un error al procesar la solicitud",
-        icon: "error",
-        allowOutsideClick: true,
-      });
-    }
+    });
+  
   };
 
   return loading ? (
