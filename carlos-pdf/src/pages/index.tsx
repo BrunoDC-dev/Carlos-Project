@@ -119,9 +119,9 @@ export default function Home() {
       showCancelButton: true,
       cancelButtonText: "Revisar",
       allowOutsideClick: false,
-    }).then(async(result) => {
+    }).then(async (result) => {
       if (result.isConfirmed) {
-        Swal.close()
+        Swal.close();
         Swal.fire({
           title: "Enviando datos",
           didOpen: () => {
@@ -129,7 +129,7 @@ export default function Home() {
           },
           allowOutsideClick: false, // Prevents the user from taking away the loader
         });
-    
+
         const data = {
           email: Cookies.get("email"),
           sessionId: Cookies.get("remis_session_id"),
@@ -146,10 +146,10 @@ export default function Home() {
           },
           body: JSONdata,
         };
-    
+
         try {
           const response_dirty = await fetch(endpoint, options);
-    
+
           if (response_dirty.status === 200) {
             const response_clean = await response_dirty.json();
             console.log(response_clean);
@@ -187,11 +187,10 @@ export default function Home() {
             allowOutsideClick: true,
           });
         }
-      }else if (result.dismiss === Swal.DismissReason.cancel){
-        Swal.close()
+      } else if (result.dismiss === Swal.DismissReason.cancel) {
+        Swal.close();
       }
     });
-  
   };
 
   return loading ? (
