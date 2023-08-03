@@ -109,7 +109,6 @@ export default function Home() {
     dataFetching();
   }, []);
 
-
   const handleSubmit = async (event: any) => {
     event.preventDefault();
     /*Swal.fire({
@@ -123,9 +122,9 @@ export default function Home() {
     const data = {
       email: Cookies.get("email"),
       sessionId: Cookies.get("remis_session_id"),
-      revenue : carRevenues,
-      expenses : carExpenses,
-      caja :money
+      revenue: carRevenues,
+      expenses: carExpenses,
+      caja: money,
     };
     const JSONdata = JSON.stringify(data);
     const endpoint = "/api/update";
@@ -177,11 +176,6 @@ export default function Home() {
       });
     }
   };
-
-
-
-
-
 
   return loading ? (
     <LoaderLogo />
