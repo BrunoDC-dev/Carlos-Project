@@ -158,7 +158,7 @@ export default function Home() {
             window.location.reload();
             Swal.update({
               title: "Exitos!",
-              text: "Datos de sesion correctos",
+              text: "Enviado con exito",
               icon: "success",
               allowOutsideClick: true,
             });
@@ -171,6 +171,8 @@ export default function Home() {
               allowOutsideClick: true,
             });
           } else {
+            console.log(response_dirty)
+            Swal.hideLoading();
             Swal.update({
               title: "Error!",
               text: "Servidor en mantenimiento, vuelva a intentarlo más tarde",
