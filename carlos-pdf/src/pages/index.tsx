@@ -81,7 +81,8 @@ export default function Home() {
     };
     try {
       const response_dirty = await fetch(endpoint, options);
-      if (response_dirty.status === 403) {
+      if (response_dirty.status == 403) {
+        console.log("hola")
         router.push("/login");
       }
       const response_clean = await response_dirty.json();
@@ -137,6 +138,7 @@ export default function Home() {
           expenses: carExpenses,
           caja: money,
         };
+        console.log(data)
         const JSONdata = JSON.stringify(data);
         const endpoint = "/api/update";
         const options = {
