@@ -266,35 +266,38 @@ export default function Home() {
               <div className="flex flex-col gap-1">
                 <h1 className="text-lg font-bold text-gray-100">Gastos</h1>
                 <div className="flex flex-col gap-1">
-                  {Object.keys(item.expenses).map((gasto) => {
-                    return (
-                      <div
-                        className="flex flex-row flex-wrap gap-2 pl-3 justify-between pr-3"
-                        key={gasto}
-                      >
-                        <label
-                          htmlFor={item.registration_number + ":" + gasto}
-                          className="text-base font-semibold text-gray-300"
-                        >
-                          {gasto}
-                        </label>
-                        <input
-                          className="px-1 py-[2px] w-2/6 rounded-lg text-center shadow-lg text-sm font-bold"
-                          type="number"
-                          name={item.registration_number + ":" + gasto}
-                          placeholder={item.expenses[gasto].toString()}
-                          id=""
-                          onChange={(e) =>
-                            handleExpenseChange(
-                              item.registration_number,
-                              gasto,
-                              e.target.value,
-                            )
-                          }
-                        />
-                      </div>
-                    );
-                  })}
+                {Object.keys(item.expenses)
+  .sort((a, b) => {
+    if (a === "Otros") return 1;
+    if (b === "Otros") return -1;
+    return a.localeCompare(b);
+  })
+  .map((gasto) => {
+    return (
+      <div
+        className="flex flex-row flex-wrap gap-2 pl-3 justify-between pr-3"
+        key={gasto}
+      >
+        <label
+          htmlFor={item.registration_number + ":" + gasto}
+          className="text-base font-semibold text-gray-300"
+        >
+          {gasto}
+        </label>
+        <input
+          className="px-1 py-[2px] w-2/6 rounded-lg text-center shadow-lg text-sm font-bold"
+          type="number"
+          name={item.registration_number + ":" + gasto}
+          placeholder={item.expenses[gasto].toString()}
+          step="0.01" 
+          id=""
+          onChange={(e) =>
+            handleExpenseChange(item.registration_number, gasto, e.target.value)
+          }
+        />
+      </div>
+    );
+  })}
                 </div>
               </div>
             </div>
