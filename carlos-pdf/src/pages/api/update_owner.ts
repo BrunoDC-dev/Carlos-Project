@@ -16,7 +16,7 @@ const MONGODB_URI = process.env.MONGODB_URI!;
 const updateMaker = async (
   db_name: string,
   filter: object,
-  property: object,
+  properties: object,
 ) => {
   const client = await MongoClient.connect(MONGODB_URI, {
     useNewUrlParser: true,
@@ -25,7 +25,7 @@ const updateMaker = async (
   const db = client.db();
 
   try {
-    await db.collection(db_name).updateOne(filter, { $set: property });
+    await db.collection(db_name).updateOne(filter,  properties);
   } finally {
     client.close();
   }
@@ -46,7 +46,10 @@ export default async function handler(
             const user_update = await updateMaker(
               "users",
               { email: email },
-              { money: caja_mongo },
+              {
+                $set: { expenses: owner_expenses,  result: result},
+                
+              },
             );
             return res.status(200).json({ message: "exitos" });
           

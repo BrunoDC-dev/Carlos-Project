@@ -189,7 +189,6 @@ export default function Home() {
           }
           
           
-          
           const owner_update_response = await api_query_maker("/api/update_owner","POST",{
             email: Cookies.get("email"),
            owner_expenses: owner_expenses_data,
