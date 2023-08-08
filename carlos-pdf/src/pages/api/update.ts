@@ -95,11 +95,6 @@ export default async function handler(
             let gastoTotal = 0;
             let revenueTotal = 0;
             for (const patente in expenses) {
-              const cars_update = await updateMaker(
-                "cars",
-                { registration_number: patente },
-                { expenses: expenses[patente], revenue: revenue[patente] },
-              );
               revenueTotal += revenue[patente];
               let gastoDecadaAuto = 0;
               for (const gasto in expenses[patente]) {
@@ -119,11 +114,7 @@ export default async function handler(
               });
             }
             const caja_mongo = caja + revenueTotal - gastoTotal;
-            const user_update = await updateMaker(
-              "users",
-              { email: email },
-              { money: caja_mongo },
-            );
+
             const balance_insert = await inserMaker("Balance", {
               date: new Date().getTime(),
               caja_before: caja,

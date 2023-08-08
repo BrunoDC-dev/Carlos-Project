@@ -182,10 +182,23 @@ export default function Home() {
          
          
           for (const patente in carExpenses) {
+            const car_update_response = await api_query_maker("/api/update_car","POST",{
+              patente : patente,
+              expenses: carExpenses[patente],
+              revenue: carRevenues[patente],
+            })
             total_revenues += carRevenues[patente];
+            let car_expenses=0
             for (const key in carExpenses[patente]) {
+              car_expenses+=carExpenses[patente][key];
               total_expenses += carExpenses[patente][key];
             }
+
+            const insert_revenue_response = await api_query_maker("/api/insert_revenue","POST",{
+              patente : patente,
+              expenses: car_expenses,
+              revenue: carRevenues[patente],
+            })
           }
           
           
