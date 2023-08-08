@@ -80,15 +80,10 @@ export default async function handler(
 ) {
   if (req.method === "POST") {
     try {
-      const { email } = req.body;
-      const { sessionId } = req.body;
       const { revenue } = req.body;
       const { expenses } = req.body;
       const { caja } = req.body;
       console.log(req.body);
-      if (!email || !sessionId) {
-        return res.status(403).json({ error: "No session" });
-      }
 
       try {
         const session_join_options = {
@@ -97,11 +92,6 @@ export default async function handler(
           foreignField: "owner_id",
           as: "session_data",
         };
-        const owner_query_result = await queryMaker("users", { email: email }, [
-          { $lookup: session_join_options },
-        ]);
-        if (owner_query_result.length > 0) {
-          if (owner_query_result[0].session_data[0].sessionId == sessionId) {
             let gastoTotal = 0;
             let revenueTotal = 0;
             for (const patente in expenses) {
@@ -143,8 +133,8 @@ export default async function handler(
               diferencia: revenueTotal - gastoTotal,
             });
             return res.status(200).json({ message: "exitos" });
-          }
-        }
+          
+        
       } catch (error) {
         console.log(error);
       }
