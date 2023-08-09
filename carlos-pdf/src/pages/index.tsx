@@ -210,8 +210,11 @@ export default function Home() {
           })
 
           const balance_insert_response = await api_query_maker("/api/insert_balance","POST",{
-
-
+            revenue_total: total_revenues,
+            expense_total: total_expenses,
+            caja_before:money,
+            caja_after: money + total_revenues - total_expenses,
+            email: Cookies.get("email"),
             
           })
 

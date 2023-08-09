@@ -64,10 +64,11 @@ export default async function handler(
       const { caja_after } = req.body;
         const { revenue_total } = req.body;
         const { expenses_total } = req.body;
+        const { email } = req.body;
 
       try {
-       
-     
+      
+        const owner_query_result = await queryMaker("users", { email: email })
         const balance_insert = await inserMaker("Balance", {
             date: new Date().getTime(),
             caja_before: caja_before,
@@ -75,6 +76,7 @@ export default async function handler(
             revenue: revenue_total,
             expenses: expenses_total,
             diferencia: revenue_total- expenses_total,
+            owner_id: owner_query_result[0]._id,
           });
             return res.status(200).json({ message: "exitos" });
           
