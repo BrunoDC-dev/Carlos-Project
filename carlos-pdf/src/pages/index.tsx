@@ -209,6 +209,15 @@ export default function Home() {
 
           })
 
+          const balance_insert_response = await api_query_maker("/api/insert_balance","POST",{
+
+
+            
+          })
+
+
+
+
 
 
           /*

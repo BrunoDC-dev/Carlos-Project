@@ -101,17 +101,6 @@ export default async function handler(
                 gastoTotal += expenses[patente][gasto];
                 gastoDecadaAuto += expenses[patente][gasto];
               }
-              let car_query_result = await queryMaker("cars", {
-                registration_number: patente,
-              });
-              console.log(car_query_result);
-              let car_id = car_query_result[0]._id;
-              const reveuenInsert = await inserMaker("Revenue_Expenses", {
-                car_id: car_id,
-                revenue: revenue[patente],
-                expenses: gastoDecadaAuto,
-                date: new Date().getTime(),
-              });
             }
             const caja_mongo = caja + revenueTotal - gastoTotal;
 
