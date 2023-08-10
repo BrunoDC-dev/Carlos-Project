@@ -16,6 +16,7 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [carsData, setCarsData] = useState<CarData[]>([]);
   const [money, setMoney] = useState(0);
+  const [ownerExpenses, setOwnerExpenses] = useState<{[key:string] : Number}>({});
   const router = useRouter();
 
   // New local state to store user input for revenue and expenses per car
@@ -65,28 +66,34 @@ export default function Home() {
     }));
   };
 
+
+  const api_query_maker= async (endpoint:string,mehtod:string, data:any) => {
+    const JSONdata = JSON.stringify(data);
+    const options = {
+      method: mehtod,
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSONdata,
+
+    }
+    const response = await fetch(endpoint, options);
+    return response
+  }
   const dataFetching = async () => {
     const data = {
       email: Cookies.get("email"),
       sessionId: Cookies.get("remis_session_id"),
     };
-    const JSONdata = JSON.stringify(data);
-    const endpoint = "/api/balance";
-    const options = {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSONdata,
-    };
     try {
-      const response_dirty = await fetch(endpoint, options);
+      const response_dirty = await api_query_maker("/api/balance","POST",data)
       if (response_dirty.status == 403) {
         console.log("hola")
         router.push("/login");
       }
       const response_clean = await response_dirty.json();
       console.log(response_clean);
+      setOwnerExpenses(response_clean.message.expenses);
       setCarsData(response_clean.message.cars_data);
       setMoney(response_clean.message.money);
       const initialCarRevenues: { [key: string]: number } = {};
@@ -109,7 +116,7 @@ export default function Home() {
   useEffect(() => {
     dataFetching();
   }, []);
-
+  
   const handleSubmit = async (event: any) => {
     event.preventDefault();
     Swal.fire({
@@ -130,8 +137,7 @@ export default function Home() {
           },
           allowOutsideClick: false, // Prevents the user from taking away the loader
         });
-
-        const data = {
+       /* const data = {
           email: Cookies.get("email"),
           sessionId: Cookies.get("remis_session_id"),
           revenue: carRevenues,
@@ -147,9 +153,77 @@ export default function Home() {
             "Content-Type": "application/json",
           },
           body: JSONdata,
-        };
+        };*/
 
         try {
+          const data_session = {
+            email: Cookies.get("email"),
+            sessionId: Cookies.get("remis_session_id"),
+          };
+          const session_response = await api_query_maker("/api/session","POST",data_session)
+          if (session_response.status == 403) {
+            router.push("/login");
+            return
+          }
+          
+          
+          let total_expenses = 0;
+          let total_revenues = 0;
+          
+          let owner_expenses_data: { [key: string]: number } = {}; // Use 'number' instead of 'Number'
+          for (const gasto in ownerExpenses) {
+            const value = event.target["owner_" + gasto].value;
+            if (value !== "") {
+              ownerExpenses[gasto] = parseFloat(value);
+            }
+            owner_expenses_data[gasto] = ownerExpenses[gasto] as number; // Cast to 'number'
+            total_expenses += ownerExpenses[gasto] as number; // Cast to 'number'
+          }
+         
+         
+          for (const patente in carExpenses) {
+            const car_update_response = await api_query_maker("/api/update_car","POST",{
+              patente : patente,
+              expenses: carExpenses[patente],
+              revenue: carRevenues[patente],
+            })
+            total_revenues += carRevenues[patente];
+            let car_expenses=0
+            for (const key in carExpenses[patente]) {
+              car_expenses+=carExpenses[patente][key];
+              total_expenses += carExpenses[patente][key];
+            }
+
+            const insert_revenue_response = await api_query_maker("/api/insert_revenue","POST",{
+              patente : patente,
+              expenses: car_expenses,
+              revenue: carRevenues[patente],
+            })
+          }
+          
+          
+          const owner_update_response = await api_query_maker("/api/update_owner","POST",{
+            email: Cookies.get("email"),
+           owner_expenses: owner_expenses_data,
+            result: total_revenues - total_expenses,
+
+          })
+
+          const balance_insert_response = await api_query_maker("/api/insert_balance","POST",{
+            revenue_total: total_revenues,
+            expense_total: total_expenses,
+            caja_before:money,
+            caja_after: money + total_revenues - total_expenses,
+            email: Cookies.get("email"),
+            
+          })
+
+
+
+
+
+
+          /*
           const response_dirty = await fetch(endpoint, options);
 
           if (response_dirty.status === 200) {
@@ -181,7 +255,7 @@ export default function Home() {
               icon: "error",
               allowOutsideClick: true,
             });
-          }
+          }*/
         } catch (error) {
           Swal.hideLoading();
           Swal.update({
@@ -200,7 +274,7 @@ export default function Home() {
   return loading ? (
     <LoaderLogo />
   ) : (
-    <main className="bg-[#f6f6f6] flex flex-col items-center h-screen gap-6">
+    <main className="bg-[#f6f6f6] flex flex-col items-center gap-6">
       <div className="py-1 flex flex-row justify-center items-center w-full text-[#ffff] bg-[#355B3E]">
         <div className="max-w-[40px]">
           <Image
@@ -218,9 +292,36 @@ export default function Home() {
       </div>
       <form
         action=""
-        className="flex flex-col items-center gap-5 px-6 py-2 w-full"
+        className="flex flex-col items-center gap-5  px-6 py-2 w-full"
         onSubmit={handleSubmit}
       >
+        <h1 className="text-lg font-semibold text-gray-600">Gastos generales:</h1>
+        <div className="flex flex-row flex-wrap justify-center  bg-[#355B3E] shadow-2xl py-5 rounded-2xl"> 
+          {Object.keys(ownerExpenses).map((gasto) => { 
+            return ( 
+            <div className="flex justify-center gap-2 py-2
+             ">
+              <label
+          htmlFor={"owner_"+gasto}
+          className="text-base font-semibold text-gray-300"
+        >
+          {gasto}:
+        </label>
+        <input
+          className="px-1 py-[2px] w-2/6 rounded-lg text-center shadow-lg text-sm font-bold"
+          type="number"
+          name={"owner_"+gasto}
+          placeholder={ownerExpenses[gasto].toString()}
+          step="0.01" 
+          id=""
+        />
+            </div>
+
+          )   })}
+
+        </div>
+        <h1 className="text-lg font-semibold text-gray-600">Gastos individuales:</h1>
+        <div className="flex flex-col items-center gap-5 py-2 w-full lg:flex-row lg:flex-wrap lg:justify-center">
         {carsData.map((item, index) => {
           return (
             <div
@@ -303,6 +404,8 @@ export default function Home() {
             </div>
           );
         })}
+
+        </div>
         <button
           type="submit"
           className="text-xl border-solid border-4 py-2 rounded-full w-fit border-[#355B3E] font-bold px-6 text-[#121212] hover:bg-[#355b3e] hover:text-[#fafafa] transition-all ease-in-out"
