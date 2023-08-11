@@ -92,29 +92,27 @@ export default async function handler(
           foreignField: "owner_id",
           as: "session_data",
         };
-            let gastoTotal = 0;
-            let revenueTotal = 0;
-            for (const patente in expenses) {
-              revenueTotal += revenue[patente];
-              let gastoDecadaAuto = 0;
-              for (const gasto in expenses[patente]) {
-                gastoTotal += expenses[patente][gasto];
-                gastoDecadaAuto += expenses[patente][gasto];
-              }
-            }
-            const caja_mongo = caja + revenueTotal - gastoTotal;
+        let gastoTotal = 0;
+        let revenueTotal = 0;
+        for (const patente in expenses) {
+          revenueTotal += revenue[patente];
+          let gastoDecadaAuto = 0;
+          for (const gasto in expenses[patente]) {
+            gastoTotal += expenses[patente][gasto];
+            gastoDecadaAuto += expenses[patente][gasto];
+          }
+        }
+        const caja_mongo = caja + revenueTotal - gastoTotal;
 
-            const balance_insert = await inserMaker("Balance", {
-              date: new Date().getTime(),
-              caja_before: caja,
-              caja_after: caja_mongo,
-              revenue: revenueTotal,
-              expenses: gastoTotal,
-              diferencia: revenueTotal - gastoTotal,
-            });
-            return res.status(200).json({ message: "exitos" });
-          
-        
+        const balance_insert = await inserMaker("Balance", {
+          date: new Date().getTime(),
+          caja_before: caja,
+          caja_after: caja_mongo,
+          revenue: revenueTotal,
+          expenses: gastoTotal,
+          diferencia: revenueTotal - gastoTotal,
+        });
+        return res.status(200).json({ message: "exitos" });
       } catch (error) {
         console.log(error);
       }

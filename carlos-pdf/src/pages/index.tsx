@@ -16,7 +16,9 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [carsData, setCarsData] = useState<CarData[]>([]);
   const [money, setMoney] = useState(0);
-  const [ownerExpenses, setOwnerExpenses] = useState<{[key:string] : Number}>({});
+  const [ownerExpenses, setOwnerExpenses] = useState<{ [key: string]: Number }>(
+    {},
+  );
   const router = useRouter();
 
   // New local state to store user input for revenue and expenses per car
@@ -66,8 +68,11 @@ export default function Home() {
     }));
   };
 
-
-  const api_query_maker= async (endpoint:string,mehtod:string, data:any) => {
+  const api_query_maker = async (
+    endpoint: string,
+    mehtod: string,
+    data: any,
+  ) => {
     const JSONdata = JSON.stringify(data);
     const options = {
       method: mehtod,
@@ -75,20 +80,23 @@ export default function Home() {
         "Content-Type": "application/json",
       },
       body: JSONdata,
-
-    }
+    };
     const response = await fetch(endpoint, options);
-    return response
-  }
+    return response;
+  };
   const dataFetching = async () => {
     const data = {
       email: Cookies.get("email"),
       sessionId: Cookies.get("remis_session_id"),
     };
     try {
-      const response_dirty = await api_query_maker("/api/balance","POST",data)
+      const response_dirty = await api_query_maker(
+        "/api/balance",
+        "POST",
+        data,
+      );
       if (response_dirty.status == 403) {
-        console.log("hola")
+        console.log("hola");
         router.push("/login");
       }
       const response_clean = await response_dirty.json();
@@ -116,7 +124,7 @@ export default function Home() {
   useEffect(() => {
     dataFetching();
   }, []);
-  
+
   const handleSubmit = async (event: any) => {
     event.preventDefault();
     Swal.fire({
@@ -137,7 +145,7 @@ export default function Home() {
           },
           allowOutsideClick: false, // Prevents the user from taking away the loader
         });
-       /* const data = {
+        /* const data = {
           email: Cookies.get("email"),
           sessionId: Cookies.get("remis_session_id"),
           revenue: carRevenues,
@@ -160,16 +168,19 @@ export default function Home() {
             email: Cookies.get("email"),
             sessionId: Cookies.get("remis_session_id"),
           };
-          const session_response = await api_query_maker("/api/session","POST",data_session)
+          const session_response = await api_query_maker(
+            "/api/session",
+            "POST",
+            data_session,
+          );
           if (session_response.status == 403) {
             router.push("/login");
-            return
+            return;
           }
-          
-          
+
           let total_expenses = 0;
           let total_revenues = 0;
-          
+
           let owner_expenses_data: { [key: string]: number } = {}; // Use 'number' instead of 'Number'
           for (const gasto in ownerExpenses) {
             const value = event.target["owner_" + gasto].value;
@@ -179,49 +190,56 @@ export default function Home() {
             owner_expenses_data[gasto] = ownerExpenses[gasto] as number; // Cast to 'number'
             total_expenses += ownerExpenses[gasto] as number; // Cast to 'number'
           }
-         
-         
+
           for (const patente in carExpenses) {
-            const car_update_response = await api_query_maker("/api/update_car","POST",{
-              patente : patente,
-              expenses: carExpenses[patente],
-              revenue: carRevenues[patente],
-            })
+            const car_update_response = await api_query_maker(
+              "/api/update_car",
+              "POST",
+              {
+                patente: patente,
+                expenses: carExpenses[patente],
+                revenue: carRevenues[patente],
+              },
+            );
             total_revenues += carRevenues[patente];
-            let car_expenses=0
+            let car_expenses = 0;
             for (const key in carExpenses[patente]) {
-              car_expenses+=carExpenses[patente][key];
+              car_expenses += carExpenses[patente][key];
               total_expenses += carExpenses[patente][key];
             }
 
-            const insert_revenue_response = await api_query_maker("/api/insert_revenue","POST",{
-              patente : patente,
-              expenses: car_expenses,
-              revenue: carRevenues[patente],
-            })
+            const insert_revenue_response = await api_query_maker(
+              "/api/insert_revenue",
+              "POST",
+              {
+                patente: patente,
+                expenses: car_expenses,
+                revenue: carRevenues[patente],
+              },
+            );
           }
-          
-          
-          const owner_update_response = await api_query_maker("/api/update_owner","POST",{
-            email: Cookies.get("email"),
-           owner_expenses: owner_expenses_data,
-            result: total_revenues - total_expenses,
 
-          })
+          const owner_update_response = await api_query_maker(
+            "/api/update_owner",
+            "POST",
+            {
+              email: Cookies.get("email"),
+              owner_expenses: owner_expenses_data,
+              result: total_revenues - total_expenses,
+            },
+          );
 
-          const balance_insert_response = await api_query_maker("/api/insert_balance","POST",{
-            revenue_total: total_revenues,
-            expense_total: total_expenses,
-            caja_before:money,
-            caja_after: money + total_revenues - total_expenses,
-            email: Cookies.get("email"),
-            
-          })
-
-
-
-
-
+          const balance_insert_response = await api_query_maker(
+            "/api/insert_balance",
+            "POST",
+            {
+              revenue_total: total_revenues,
+              expense_total: total_expenses,
+              caja_before: money,
+              caja_after: money + total_revenues - total_expenses,
+              email: Cookies.get("email"),
+            },
+          );
 
           /*
           const response_dirty = await fetch(endpoint, options);
@@ -295,116 +313,128 @@ export default function Home() {
         className="flex flex-col items-center gap-5  px-6 py-2 w-full"
         onSubmit={handleSubmit}
       >
-        <h1 className="text-lg font-semibold text-gray-600">Gastos generales:</h1>
-        <div className="flex flex-row flex-wrap justify-center  bg-[#355B3E] shadow-2xl py-5 rounded-2xl"> 
-          {Object.keys(ownerExpenses).map((gasto) => { 
-            return ( 
-            <div className="flex justify-center gap-2 py-2
-             ">
-              <label
-          htmlFor={"owner_"+gasto}
-          className="text-base font-semibold text-gray-300"
-        >
-          {gasto}:
-        </label>
-        <input
-          className="px-1 py-[2px] w-2/6 rounded-lg text-center shadow-lg text-sm font-bold"
-          type="number"
-          name={"owner_"+gasto}
-          placeholder={ownerExpenses[gasto].toString()}
-          step="0.01" 
-          id=""
-        />
-            </div>
-
-          )   })}
-
+        <h1 className="text-lg font-semibold text-gray-600">
+          Gastos generales:
+        </h1>
+        <div className="flex flex-row flex-wrap justify-center  bg-[#355B3E] shadow-2xl py-5 rounded-2xl">
+          {Object.keys(ownerExpenses).map((gasto) => {
+            return (
+              <div
+                className="flex justify-center gap-2 py-2
+             "
+              >
+                <label
+                  htmlFor={"owner_" + gasto}
+                  className="text-base font-semibold text-gray-300"
+                >
+                  {gasto}:
+                </label>
+                <input
+                  className="px-1 py-[2px] w-2/6 rounded-lg text-center shadow-lg text-sm font-bold"
+                  type="number"
+                  name={"owner_" + gasto}
+                  placeholder={ownerExpenses[gasto].toString()}
+                  step="0.01"
+                  id=""
+                />
+              </div>
+            );
+          })}
         </div>
-        <h1 className="text-lg font-semibold text-gray-600">Gastos individuales:</h1>
+        <h1 className="text-lg font-semibold text-gray-600">
+          Gastos individuales:
+        </h1>
         <div className="flex flex-col items-center gap-5 py-2 w-full lg:flex-row lg:flex-wrap lg:justify-center">
-        {carsData.map((item, index) => {
-          return (
-            <div
-              className="flex flex-col gap-2 bg-[#355B3E] shadow-2xl py-5 rounded-2xl px-3"
-              key={index}
-            >
-              <p className="text-lg text-center font-semibold text-[#fafafa]">
-                Vehiculo:
-                <span className="font-normal text-sm">
-                  {" "}
-                  {item.registration_number}
-                </span>
-              </p>
-              <p className="text-base font-semibold pl-3 text-gray-300">
-                Conductor:{" "}
-                <span className="font-normal text-sm">{item.driver_name}</span>
-              </p>
+          {carsData.map((item, index) => {
+            return (
+              <div
+                className="flex flex-col gap-2 bg-[#355B3E] shadow-2xl py-5 rounded-2xl px-3"
+                key={index}
+              >
+                <p className="text-lg text-center font-semibold text-[#fafafa]">
+                  Vehiculo:
+                  <span className="font-normal text-sm">
+                    {" "}
+                    {item.registration_number}
+                  </span>
+                </p>
+                <p className="text-base font-semibold pl-3 text-gray-300">
+                  Conductor:{" "}
+                  <span className="font-normal text-sm">
+                    {item.driver_name}
+                  </span>
+                </p>
 
-              <div className="flex flex-col gap-1">
-                <h1 className="text-lg font-bold text-gray-100">Ganancias:</h1>
-                <div className="flex flex-row flex-wrap gap-2 pl-3 justify-between pr-3">
-                  <label
-                    htmlFor={"revenue" + item.registration_number}
-                    className="text-base font-semibold text-gray-300"
-                  >
-                    Facturacion:
-                  </label>
-                  <input
-                    type="number"
-                    name={"revenue" + item.registration_number}
-                    className="px-1 py-[2px] text-sm font-bold w-2/6 rounded-lg text-center shadow-lg"
-                    placeholder={item.revenue.toString()}
-                    id=""
-                    onChange={(e) =>
-                      handleRevenueChange(
-                        item.registration_number,
-                        e.target.value,
-                      )
-                    }
-                  />
-                </div>
-              </div>
-              <div className="flex flex-col gap-1">
-                <h1 className="text-lg font-bold text-gray-100">Gastos</h1>
                 <div className="flex flex-col gap-1">
-                {Object.keys(item.expenses)
-  .sort((a, b) => {
-    if (a === "Otros") return 1;
-    if (b === "Otros") return -1;
-    return a.localeCompare(b);
-  })
-  .map((gasto) => {
-    return (
-      <div
-        className="flex flex-row flex-wrap gap-2 pl-3 justify-between pr-3"
-        key={gasto}
-      >
-        <label
-          htmlFor={item.registration_number + ":" + gasto}
-          className="text-base font-semibold text-gray-300"
-        >
-          {gasto}
-        </label>
-        <input
-          className="px-1 py-[2px] w-2/6 rounded-lg text-center shadow-lg text-sm font-bold"
-          type="number"
-          name={item.registration_number + ":" + gasto}
-          placeholder={item.expenses[gasto].toString()}
-          step="0.01" 
-          id=""
-          onChange={(e) =>
-            handleExpenseChange(item.registration_number, gasto, e.target.value)
-          }
-        />
-      </div>
-    );
-  })}
+                  <h1 className="text-lg font-bold text-gray-100">
+                    Ganancias:
+                  </h1>
+                  <div className="flex flex-row flex-wrap gap-2 pl-3 justify-between pr-3">
+                    <label
+                      htmlFor={"revenue" + item.registration_number}
+                      className="text-base font-semibold text-gray-300"
+                    >
+                      Facturacion:
+                    </label>
+                    <input
+                      type="number"
+                      name={"revenue" + item.registration_number}
+                      className="px-1 py-[2px] text-sm font-bold w-2/6 rounded-lg text-center shadow-lg"
+                      placeholder={item.revenue.toString()}
+                      id=""
+                      onChange={(e) =>
+                        handleRevenueChange(
+                          item.registration_number,
+                          e.target.value,
+                        )
+                      }
+                    />
+                  </div>
+                </div>
+                <div className="flex flex-col gap-1">
+                  <h1 className="text-lg font-bold text-gray-100">Gastos</h1>
+                  <div className="flex flex-col gap-1">
+                    {Object.keys(item.expenses)
+                      .sort((a, b) => {
+                        if (a === "Otros") return 1;
+                        if (b === "Otros") return -1;
+                        return a.localeCompare(b);
+                      })
+                      .map((gasto) => {
+                        return (
+                          <div
+                            className="flex flex-row flex-wrap gap-2 pl-3 justify-between pr-3"
+                            key={gasto}
+                          >
+                            <label
+                              htmlFor={item.registration_number + ":" + gasto}
+                              className="text-base font-semibold text-gray-300"
+                            >
+                              {gasto}
+                            </label>
+                            <input
+                              className="px-1 py-[2px] w-2/6 rounded-lg text-center shadow-lg text-sm font-bold"
+                              type="number"
+                              name={item.registration_number + ":" + gasto}
+                              placeholder={item.expenses[gasto].toString()}
+                              step="0.01"
+                              id=""
+                              onChange={(e) =>
+                                handleExpenseChange(
+                                  item.registration_number,
+                                  gasto,
+                                  e.target.value,
+                                )
+                              }
+                            />
+                          </div>
+                        );
+                      })}
+                  </div>
                 </div>
               </div>
-            </div>
-          );
-        })}
-
+            );
+          })}
         </div>
         <button
           type="submit"
