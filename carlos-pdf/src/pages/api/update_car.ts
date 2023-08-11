@@ -12,7 +12,6 @@ type Data = {
 
 const MONGODB_URI = process.env.MONGODB_URI!;
 
-
 const updateMaker = async (
   db_name: string,
   filter: object,
@@ -25,7 +24,7 @@ const updateMaker = async (
   const db = client.db();
 
   try {
-    await db.collection(db_name).updateOne(filter,  properties);
+    await db.collection(db_name).updateOne(filter, properties);
   } finally {
     client.close();
   }
@@ -39,21 +38,17 @@ export default async function handler(
     try {
       const { revenue } = req.body;
       const { expenses } = req.body;
-        const { patente } = req.body;
+      const { patente } = req.body;
 
       try {
-       
-            const car_update = await updateMaker(
-              "cars",
-              { patente: patente },
-              {
-                $set: { expenses: expenses,  revenue: revenue},
-                
-              },
-            );
-            return res.status(200).json({ message: "exitos" });
-          
-        
+        const car_update = await updateMaker(
+          "cars",
+          { patente: patente },
+          {
+            $set: { expenses: expenses, revenue: revenue },
+          },
+        );
+        return res.status(200).json({ message: "exitos" });
       } catch (error) {
         console.log(error);
       }

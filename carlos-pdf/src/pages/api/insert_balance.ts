@@ -18,41 +18,41 @@ type AggregationPipelineStage =
   | { $sort: object }
   | { $limit: number };
 const queryMaker = async (
-    database: string,
-    filter: object,
-    pipeline: AggregationPipelineStage[] = [],
-  ) => {
-    const client = await MongoClient.connect(MONGODB_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    } as MongoClientOptions);
-    const db = client.db();
-  
-    try {
-      const aggregationPipeline = [...pipeline, { $match: filter }];
-      const result = await db
-        .collection(database)
-        .aggregate(aggregationPipeline)
-        .toArray();
-      return result;
-    } finally {
-      client.close();
-    }
-  };
+  database: string,
+  filter: object,
+  pipeline: AggregationPipelineStage[] = [],
+) => {
+  const client = await MongoClient.connect(MONGODB_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  } as MongoClientOptions);
+  const db = client.db();
 
-  const inserMaker = async (db_name: string, properties: object) => {
-    const client = await MongoClient.connect(MONGODB_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    } as MongoClientOptions);
-    const db = client.db();
-  
-    try {
-      await db.collection(db_name).insertOne(properties);
-    } finally {
-      client.close();
-    }
-  };
+  try {
+    const aggregationPipeline = [...pipeline, { $match: filter }];
+    const result = await db
+      .collection(database)
+      .aggregate(aggregationPipeline)
+      .toArray();
+    return result;
+  } finally {
+    client.close();
+  }
+};
+
+const inserMaker = async (db_name: string, properties: object) => {
+  const client = await MongoClient.connect(MONGODB_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  } as MongoClientOptions);
+  const db = client.db();
+
+  try {
+    await db.collection(db_name).insertOne(properties);
+  } finally {
+    client.close();
+  }
+};
 
 export default async function handler(
   req: NextApiRequest,
@@ -62,25 +62,22 @@ export default async function handler(
     try {
       const { caja_before } = req.body;
       const { caja_after } = req.body;
-        const { revenue_total } = req.body;
-        const { expenses_total } = req.body;
-        const { email } = req.body;
+      const { revenue_total } = req.body;
+      const { expenses_total } = req.body;
+      const { email } = req.body;
 
       try {
-      
-        const owner_query_result = await queryMaker("users", { email: email })
+        const owner_query_result = await queryMaker("users", { email: email });
         const balance_insert = await inserMaker("Balance", {
-            date: new Date().getTime(),
-            caja_before: caja_before,
-            caja_after: caja_after,
-            revenue: revenue_total,
-            expenses: expenses_total,
-            diferencia: revenue_total- expenses_total,
-            owner_id: owner_query_result[0]._id,
-          });
-            return res.status(200).json({ message: "exitos" });
-          
-        
+          date: new Date().getTime(),
+          caja_before: caja_before,
+          caja_after: caja_after,
+          revenue: revenue_total,
+          expenses: expenses_total,
+          diferencia: revenue_total - expenses_total,
+          owner_id: owner_query_result[0]._id,
+        });
+        return res.status(200).json({ message: "exitos" });
       } catch (error) {
         console.log(error);
       }
