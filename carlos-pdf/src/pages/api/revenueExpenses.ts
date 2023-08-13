@@ -90,7 +90,6 @@ export default async function handler(
               const previousRevenue = car_revenue_array[1]?.revenue || 0;
               const recentExpenses = car_revenue_array[0]?.expenses || 0;
               const previousExpenses = car_revenue_array[1]?.expenses || 0;
-
               let data = {
                 car_name: car.car_name,
                 driver_name: car.driver_name,
