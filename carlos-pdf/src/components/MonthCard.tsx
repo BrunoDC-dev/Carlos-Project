@@ -28,10 +28,14 @@ const MonthCard = (props: MonthCardProps) => {
       break;
   }
 
-  let porcentaje = Math.round(
-    ((props.current_amount - props.previous_amount) / props.previous_amount) *
-      100,
-  );
+  let porcentaje = 0;
+
+  if (props.previous_amount !== 0) {
+    porcentaje = Math.round(
+      ((props.current_amount - props.previous_amount) / props.previous_amount) *
+        100
+    );
+  }
 
   return (
     <div className="bg-[#ffff] rounded-xl w-4/5 shadow-lg px-4 py-3 flex flex-col items-center gap-3 lg:w-1/4">

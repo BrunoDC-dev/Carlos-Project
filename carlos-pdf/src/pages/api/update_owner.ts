@@ -45,7 +45,7 @@ export default async function handler(
           "users",
           { email: email },
           {
-            $set: { expenses: owner_expenses, result: result },
+            $set: { expenses: owner_expenses, money: result },
           },
         );
         return res.status(200).json({ message: "exitos" });
