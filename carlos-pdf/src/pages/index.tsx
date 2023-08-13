@@ -32,11 +32,11 @@ export default function Home() {
     // Remove leading zeros from the input value
     const trimmedValue = value.replace(/^0+/, "");
 
-    // Set the parsedValue to 0 if it's an empty string or "0", otherwise parse it as an integer
-    const parsedValue =
-      trimmedValue === "" || trimmedValue === "0"
+    // Convert the input value to a number or set it to 0 if it's an empty string or NaN
+    const parsedValue = trimmedValue === "" || isNaN(parseFloat(trimmedValue))
         ? 0
-        : parseInt(trimmedValue, 10);
+        : parseFloat(trimmedValue);
+
 
     setCarRevenues((prevRevenues) => ({
       ...prevRevenues,
@@ -49,24 +49,24 @@ export default function Home() {
     registrationNumber: string,
     expenseKey: string,
     value: string,
-  ) => {
+) => {
     // Convert the input value to a number or set it to 0 if it's an empty string or NaN
     const trimmedValue = value.replace(/^0+/, "");
 
     // Convert the input value to a number or set it to 0 if it's an empty string or NaN
-    const parsedValue =
-      trimmedValue === "" || isNaN(parseInt(trimmedValue, 10))
+    const parsedValue = trimmedValue === "" || isNaN(parseFloat(trimmedValue))
         ? 0
-        : parseInt(trimmedValue, 10);
+        : parseFloat(trimmedValue);
 
     setCarExpenses((prevExpenses) => ({
-      ...prevExpenses,
-      [registrationNumber]: {
-        ...prevExpenses[registrationNumber],
-        [expenseKey]: parsedValue,
-      },
+        ...prevExpenses,
+        [registrationNumber]: {
+            ...prevExpenses[registrationNumber],
+            [expenseKey]: parsedValue,
+        },
     }));
-  };
+};
+
 
   const api_query_maker = async (
     endpoint: string,
@@ -201,6 +201,7 @@ export default function Home() {
                 revenue: carRevenues[patente],
               },
             );
+            console.log("Car Update",patente, carExpenses[patente], carRevenues[patente])
             total_revenues += carRevenues[patente];
             let car_expenses = 0;
             for (const key in carExpenses[patente]) {
@@ -218,7 +219,7 @@ export default function Home() {
               },
             );
           }
-
+          console.log("Owner Update",owner_expenses_data, total_revenues ,total_expenses)
           const owner_update_response = await api_query_maker(
             "/api/update_owner",
             "POST",
@@ -234,18 +235,14 @@ export default function Home() {
             "POST",
             {
               revenue_total: total_revenues,
-              expense_total: total_expenses,
+              expenses_total: total_expenses,
               caja_before: money,
               caja_after: money + total_revenues - total_expenses,
               email: Cookies.get("email"),
             },
           );
-
-          /*
-          const response_dirty = await fetch(endpoint, options);
-
-          if (response_dirty.status === 200) {
-            const response_clean = await response_dirty.json();
+          if (balance_insert_response.status === 200) {
+            const response_clean = await balance_insert_response.json();
             console.log(response_clean);
             // Update the Swal modal content with the result message
             Swal.hideLoading();
@@ -256,7 +253,7 @@ export default function Home() {
               icon: "success",
               allowOutsideClick: true,
             });
-          } else if (response_dirty.status === 403) {
+          } else if (balance_insert_response.status === 403) {
             Swal.hideLoading();
             Swal.update({
               title: "Error!",
@@ -265,7 +262,7 @@ export default function Home() {
               allowOutsideClick: true,
             });
           } else {
-            console.log(response_dirty)
+            console.log(balance_insert_response)
             Swal.hideLoading();
             Swal.update({
               title: "Error!",
@@ -273,7 +270,7 @@ export default function Home() {
               icon: "error",
               allowOutsideClick: true,
             });
-          }*/
+          }
         } catch (error) {
           Swal.hideLoading();
           Swal.update({
@@ -382,6 +379,7 @@ export default function Home() {
                       className="px-1 py-[2px] text-sm font-bold w-2/6 rounded-lg text-center shadow-lg"
                       placeholder={item.revenue.toString()}
                       id=""
+                      step="0.01"
                       onChange={(e) =>
                         handleRevenueChange(
                           item.registration_number,

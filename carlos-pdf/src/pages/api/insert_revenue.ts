@@ -61,7 +61,7 @@ export default async function handler(
   if (req.method === "POST") {
     try {
       const { revenue } = req.body;
-      const { total_car_expenses } = req.body;
+      const { expenses } = req.body;
       const { patente } = req.body;
 
       try {
@@ -73,7 +73,7 @@ export default async function handler(
         const reveuenInsert = await inserMaker("Revenue_Expenses", {
           car_id: car_id,
           revenue: revenue,
-          expenses: total_car_expenses,
+          expenses: expenses,
           date: new Date().getTime(),
         });
         return res.status(200).json({ message: "exitos" });

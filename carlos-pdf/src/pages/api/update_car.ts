@@ -43,7 +43,7 @@ export default async function handler(
       try {
         const car_update = await updateMaker(
           "cars",
-          { patente: patente },
+          { registration_number: patente },
           {
             $set: { expenses: expenses, revenue: revenue },
           },
